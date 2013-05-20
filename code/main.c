@@ -14,6 +14,7 @@
  */
 
 
+ /* les includes */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +32,7 @@
  */
 int main( int argc, char **argv )
 {
+    /* counter */
     int i;  
     
     if (openFileLvl("../data/levels.lvl") != 0) {
@@ -48,11 +50,11 @@ int main( int argc, char **argv )
         printf("-%s-\n", lvl->dat[i]);
     }
     
-    
-    
-
-    
+    /* non implemente */
     closeFileLvl();
+    
+    /*
+    /!\ il faut free le level */
     
     return (0);
 }
