@@ -14,19 +14,12 @@
  * \brief 
  * 
  */
-static struct {
+static struct datafile_t {
     char *name;         /*!< Nom du fichier. */
-    unsigned int nbrLvl;    /*!< Contient le numero du niveau. */
-    FILE *fd;           /*!< Tableau 2D vers les elements du niveau. */
+    uint32_t nbrLvl;    /*!< Contient le numero du niveau. */
+    FILE *fd;           /*!< Instance du fichier */
     fpos_t lvlCur;      /*!< Indique le debut des niveau. */
-} datafile = {NULL, 0, NULL, 0};
-
-
-/**
- * \fn uint8_t openFileLvl( char *file );
- * \brief ouvre le fichier de levels
- * 
- */
+} datafile = {NULL, 0, NULL};
 
 
 
@@ -63,8 +56,6 @@ int8_t openFileLvl( char *file )
 }
 
 
-// printf("%d\n", pos);for (l=0 ; l<100 ; l++) printf("%c", fgetc(datafile.fd)); exit(0);
-
 /**
  * \fn Level* readLevel( char *file, uint16_t num );
  * \brief Creer un objet %Level
@@ -82,8 +73,8 @@ Level* readLevel( int16_t num )
     uint16_t nbL = 0;
     uint16_t l;
     uint16_t len;
-    Level* lvl = malloc( sizeof (Level) );
-    assert( lvl );
+    Level* lvl = NULL;
+    assert( lvl = malloc( sizeof (Level) ) );
     
     /* creer le motif pour rechercher le niveau */
     sprintf(motif, ";LEVEL %d\n", num);
@@ -127,11 +118,9 @@ Level* readLevel( int16_t num )
     }
     
     /* nbL contient le nombre de lignes +1 (pour la sentinelle) */
-    lvl->dat = malloc( (nbL+1) * sizeof (char*) );
-    assert(lvl->dat);
+    assert( lvl->dat = malloc( (nbL+1) * sizeof (char*) ) );
     
     /* on se replace au debut du niveau */
-    pos--;
     fsetpos(datafile.fd, &pos);
         
     /* charge le niveau ligne par ligne */
@@ -141,8 +130,7 @@ Level* readLevel( int16_t num )
         
         len = strlen(buff);
         /* on allou et verivie l'allocation de la ligne */
-        lvl->dat[l] = malloc( (len) * sizeof (char) );
-        assert(lvl->dat[l]);
+        assert( lvl->dat[l] = malloc( (len) * sizeof (char) ) );
         
         /* on remplie la ligne */
         buff[len-1] = '\0';
@@ -165,6 +153,26 @@ Level* readLevel( int16_t num )
  */
 void closeFileLvl() {
     fclose(datafile.fd);
+}
+
+/**
+ * \fn void closeLevel();
+ * \brief Libere le level
+ * \param Level a liberer
+ * 
+ */
+void closeLevel(Level* lvl) {
+    char** l;
+    l = lvl->dat;
+    
+    /* libere les lignes */
+    while (*l) free( *(l++) );
+    
+    /* libere le tableau de pointeur de lignes */
+    free(lvl->dat);
+    
+    /* libere le lvl */
+    free(lvl);
 }
 
 

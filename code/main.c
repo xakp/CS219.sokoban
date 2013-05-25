@@ -21,6 +21,8 @@
 #include <assert.h>
 
 
+#include <allegro5/allegro5.h>
+
 #include "level.h"
 
 
@@ -32,14 +34,15 @@
  */
 int main( int argc, char **argv )
 {
-    /* counter */
     int i;  
+    Level *lvl = NULL;
     
     if (openFileLvl("../data/levels.lvl") != 0) {
         puts("erreur\n");
     }
     
-    Level *lvl = (Level*)readLevel(2);
+    lvl = readLevel(2);
+    
     if (lvl == NULL) {
         puts("lecture impossible\n");
         return -1;
@@ -50,12 +53,13 @@ int main( int argc, char **argv )
         printf("-%s-\n", lvl->dat[i]);
     }
     
+    /* libere le level */
+    closeLevel(lvl);
+    
     /* non implemente */
     closeFileLvl();
     
-    /*
-    /!\ il faut free le level */
-    
     return (0);
 }
+
 

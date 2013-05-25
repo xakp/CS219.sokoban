@@ -36,8 +36,9 @@ int8_t openFileLvl( char *file );
 void closeFileLvl();
 
 Level* readLevel( int16_t num );
-
+void closeLevel(Level* lvl);
 
 
 #endif
+
 
