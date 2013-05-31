@@ -15,18 +15,10 @@ EXEC=./sokoban
 
 # windows
 ifdef SystemRoot
-	RM = del 
+	RM=del 
 else
-	ifeq ($(shell uname), Linux)
-# linux
-		RM = rm -f 
-	endif
+	RM=rm -f 
 endif
-
-#linux
-	ifndef SystemRoot
-	export LD_LIBRARY_PATH=LD_LIBRARY_PATH:
-	endif
 
 
 all: $(OBJ)
@@ -36,10 +28,6 @@ all: $(OBJ)
 	$(CC) $^ $(CFLAGS) -o $@
 
 clean:
-	$(RM) *.o $(EXEC)
-
-
-install_allegro:
-	cd ./allegro-5.0.9/build/ && sudo $(MAKE) install
-
+	$(RM) *.o
+	$(RM) $(EXEC)
 
