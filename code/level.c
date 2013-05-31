@@ -18,7 +18,6 @@ static struct datafile_t {
     char *name;         /*!< Nom du fichier. */
     uint32_t nbrLvl;    /*!< Contient le numero du niveau. */
     FILE *fd;           /*!< Instance du fichier */
-    fpos_t lvlCur;      /*!< Indique le debut des niveau. */
 } datafile = {NULL, 0, NULL};
 
 
@@ -48,7 +47,6 @@ int8_t openFileLvl( char *file )
         /* on cherche l'occurence de ";MAXLEVEL" */
         if ( strstr(buff, ";MAXLEVEL") != NULL ) {
             sscanf(buff, ";MAXLEVEL %u\n", &(datafile.nbrLvl));
-            fgetpos( datafile.fd, &(datafile.lvlCur) );
             return (0);
         }
     }
@@ -80,7 +78,7 @@ Level* readLevel( int16_t num )
     sprintf(motif, ";LEVEL %d\n", num);
     
     /* Se place au debut des niveaux */
-    fsetpos(datafile.fd, &(datafile.lvlCur));
+    rewind(datafile.fd);
     
     /* cherche le numero du niveau */
     while ( fgets(buff, BUFFER_SIZE, datafile.fd) != NULL ) {
