@@ -1,12 +1,10 @@
 
 
 CC=gcc 
-CFLAGS=-c -Wall -pedantic -I./allegro-5.0.9/include/ -I./allegro-5.0.9/build/include/ \
-    -Wno-long-long
+CFLAGS=-c -Wall -pedantic -Wno-long-long 
 
 LD=gcc 
-LFLAGS=-L./allegro-5.0.9/build/lib/ -lallegro -lallegro_main -lallegro_image -lallegro_memfile \
-    -lallegro_primitives -lallegro_color -lallegro_font
+LFLAGS= 
 
 
 MAKE=make
@@ -17,7 +15,7 @@ EXEC=./sokoban
 
 # windows
 ifdef SystemRoot
-	RM = del /Q 
+	RM = del 
 else
 	ifeq ($(shell uname), Linux)
 # linux

@@ -119,6 +119,7 @@ Level* readLevel( int16_t num )
     assert( lvl->dat = malloc( (nbL+1) * sizeof (char*) ) );
     
     /* on se replace au debut du niveau */
+    rewind(datafile.fd);
     fsetpos(datafile.fd, &pos);
         
     /* charge le niveau ligne par ligne */
