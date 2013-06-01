@@ -23,7 +23,7 @@ static struct datafile_t {
 
 
 /**
- * \fn uint8_t openFileLvl( char *file );
+ * \fn int8_t openFileLvl( char *file );
  * \brief ouvre le fichier de levels
  * 
  */

@@ -1,5 +1,5 @@
 /**
- * \ingroup log.h
+ * \file log.h
  * \brief Mini-projet CS219 Sokoban
  * \author EYMARD Gabrielle - SCHLOTTERBECK Guillaume
  * \version 1.0
@@ -27,7 +27,7 @@ typedef struct {
     void* data;             /*!< donne definissant un coup, a definir avec gab*/
 
     /* double chainage */
-    ActionsLog_t* cursor;   /*!< le coup selectionne*/
+    ActionsLog_t* next;   /*!< le coup suivant*/
     ActionsLog_t* previous; /*!< Le coup precedent*/
 } log_actions_t;
 
@@ -40,7 +40,7 @@ typedef struct {
 typedef struct {
     ActionsLog_t* start;    /*!< le coup selectionne*/
     ActionsLog_t* end;      /*!< Le coup precedent*/
-    ActionsLog_t* cursor;   /*!< Le coup precedent*/
+    ActionsLog_t* selected; /*!< Le coup selectionne*/
 } log_t;
 
 

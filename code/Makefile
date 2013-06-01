@@ -4,20 +4,21 @@ CC=gcc
 CFLAGS=-c -Wall -pedantic -Wno-long-long 
 
 LD=gcc 
-LFLAGS= 
+LFLAGS= -lallegro -lallegro_main
 
 
 MAKE=make
 
 OBJ=main.o level.o
 
-EXEC=./sokoban
 
 # windows
 ifdef SystemRoot
-	RM=del 
+	RM=rm
+	EXEC=sokoban.exe
 else
 	RM=rm -f 
+	EXEC=sokoban
 endif
 
 
@@ -28,6 +29,7 @@ all: $(OBJ)
 	$(CC) $^ $(CFLAGS) -o $@
 
 clean:
-	$(RM) *.o
+	$(RM) $(OBJ)
 	$(RM) $(EXEC)
+
 

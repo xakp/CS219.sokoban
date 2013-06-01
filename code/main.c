@@ -20,7 +20,7 @@
 #include <string.h>
 #include <assert.h>
 
-
+#include <allegro5/allegro5.h>
 
 #include "level.h"
 
