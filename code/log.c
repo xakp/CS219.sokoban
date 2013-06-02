@@ -7,6 +7,7 @@
  *
  */
 
+ 
 #include <stdlib.h>
 #include "log.h"
 
@@ -190,7 +191,7 @@ int log_freeBackward( log_t* log ) {
 
 /**
  * \ingroup log
- * \fn 
+ * \fn int log_freeAll( log_t* )
  * \brief detruit tous les elements
  * \param la liste
  * \retval code d'erreur
