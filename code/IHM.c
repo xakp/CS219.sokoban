@@ -16,88 +16,74 @@
   */
 
 
-
 /**
- * \var static int _dimsprite = -1;
- * \brief dimention des sprite en pixels
+ * \struct ihm_context
+ * \brief initilise tout
+ * globale et static. c'est le contexte graphique et evenemenciel.
+ * 
  */
-static int _dimsprite = -1;
-
-
-/**
- * \var static ALLEGRO_BITMAP* spritesheet = NULL;
- * \brief pointeur sur la sprtiteshhep, globale mais protege
- */
-static ALLEGRO_BITMAP* _spritesheet = NULL;
-
-
-
-/**
- * \var static ALLEGRO_EVENT_QUEUE *keyboardQueue = NULL;
- * \brief 
- */
-static ALLEGRO_EVENT_QUEUE *keyboardQueue = NULL;
-
-
-/**
- * \var static ALLEGRO_EVENT_QUEUE *mouseQueue = NULL;
- * \brief 
- */
-static ALLEGRO_EVENT_QUEUE *mouseQueue = NULL;
-
-
-/**
- * \var static ALLEGRO_EVENT_QUEUE *displayQueue = NULL;
- * \brief 
- */
-static ALLEGRO_EVENT_QUEUE *displayQueue = NULL;
+ static struct {
+    ALLEGRO_DISPLAY* display;
+    lvl_t* lvl;
+    ALLEGRO_BITMAP* background;
+    int margex;                         /*!< en nombre de cellules de GROUND. */
+    int margey;                         /*!< en nombre de cellules de GROUND. */
+    
+    int dimsprite;                      /*!< dimention des sprite en pixels */
+    ALLEGRO_BITMAP* spritesheet;        /*!< pointeur sur la sprtiteshhep, globale mais proteges */
+    
+    ALLEGRO_EVENT_QUEUE *keyboardQueue; /*!< file pour les evenements clavier */
+    ALLEGRO_EVENT_QUEUE *mouseQueue;    /*!< file pour les evenements sourie */
+    ALLEGRO_EVENT_QUEUE *displayQueue;  /*!< file pour les evenements display */
+    
+} ihm_context = {NULL, NULL, NULL, 0, 0, -1, NULL, NULL, NULL, NULL}; 
+ 
 
 
 
 
 /**
- * \fn ALLEGRO_DISPLAY* ihm_init(int w, int h, int flags)
+ * \fn int ihm_init(int w, int h, int flags)
  * \brief initilise tout
  * \retval le display
  * 
  */
-ALLEGRO_DISPLAY* ihm_init(int w, int h, int flags) {
-    ALLEGRO_DISPLAY *display;
-    
+int ihm_init(int w, int h, int flags) {
+
     /* init */
     if ( !(al_init() && al_install_mouse() && al_install_keyboard() && al_init_image_addon() ) ) {
         fprintf(stderr, "error init allegro or allegro's modules\n");
-        return (NULL);
+        return (-1);
     }
 
     /* creer le display */
     al_set_new_display_flags(flags);
-    display = al_create_display(w, h);
+    ihm_context.display = al_create_display(w, h);
     
     /* teste la creation du display */
-    if (display == NULL) {
+    if (ihm_context.display == NULL) {
         fprintf(stderr, "error to create display\n");
-        return (NULL);
+        return (-1);
     }
     
     /* creer les 3 files d'evenement */
-    keyboardQueue = al_create_event_queue();
-    mouseQueue    = al_create_event_queue();
-    displayQueue  = al_create_event_queue();
+    ihm_context.keyboardQueue = al_create_event_queue();
+    ihm_context.mouseQueue    = al_create_event_queue();
+    ihm_context.displayQueue  = al_create_event_queue();
     
     /* teste les creations */
-    if ( !(keyboardQueue && mouseQueue && displayQueue) ) {
+    if ( !(ihm_context.keyboardQueue && ihm_context.mouseQueue && ihm_context.displayQueue) ) {
         fprintf(stderr, "error to create event queue\n");
-        al_destroy_display(display);
-        return (NULL);
+        al_destroy_display(ihm_context.display);
+        return (-1);
     }
     
     /* abonne les modules a leur file respective */
-    al_register_event_source(keyboardQueue, al_get_keyboard_event_source());
-    al_register_event_source(mouseQueue   , al_get_mouse_event_source());
-    al_register_event_source(displayQueue , al_get_display_event_source(display));
+    al_register_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
+    al_register_event_source(ihm_context.mouseQueue   , al_get_mouse_event_source());
+    al_register_event_source(ihm_context.displayQueue , al_get_display_event_source(ihm_context.display));
     
-    return display;
+    return (0);
 }
 
 
@@ -127,11 +113,11 @@ int ihm_loadSpriteSheet(char* path, int dimsprite) {
     al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_32_WITH_ALPHA);
     
     /* Load some bitmap with alpha in it */
-    _spritesheet = al_load_bitmap(path);
+    ihm_context.spritesheet = al_load_bitmap(path);
     
-    if (_spritesheet != NULL ) {
-        _dimsprite = dimsprite;
-        return 0;
+    if (ihm_context.spritesheet != NULL ) {
+        ihm_context.dimsprite = dimsprite;
+        return (0);
     }
     return (-1);
 }
@@ -139,32 +125,17 @@ int ihm_loadSpriteSheet(char* path, int dimsprite) {
 
 
 /**
- * \fn ihm_lab* ihm_loadLab(lvl_t* lvl, int margex, int margey)
+ * \fn void ihm_loadLab(lvl_t* lvl, int margex, int margey)
  * \brief 
  * \retval
  * 
  */
-ihm_lab* ihm_loadLab(lvl_t* lvl, int margex, int margey) {
+void ihm_loadLab(lvl_t* lvl, int margex, int margey) {
+    ihm_context.lvl = lvl;
+    ihm_context.margex = margex;
+    ihm_context.margey = margey;
     
-    ihm_lab* lab = malloc( sizeof (ihm_lab) );
-    assert( lab != NULL );
-    
-    lab->lvl = lvl;
-    lab->margex = margex;
-    lab->margey = margey;
-    
-    return lab;
-}
-
-
-
-/**
- * \fn void ihm_closelab( ihm_lab* )
- * \brief 
- * \retval
- * 
- */
-void ihm_closelab( ihm_lab*  lab) {
+    /* resize en condition etc... */
 }
 
 
@@ -175,9 +146,10 @@ void ihm_closelab( ihm_lab*  lab) {
  * \retval
  * 
  */
-int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp) {
+int ihm_drawSpriteInLab(int posx, int posy, Sprites sp) {
     
-    al_draw_bitmap(_spritesheet, 0, 0, 0);
+    al_set_target_backbuffer(ihm_context.display);
+    al_draw_bitmap(ihm_context.spritesheet, 0, 0, 0);
     
     return 0;
 }
@@ -192,11 +164,11 @@ int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp) {
  */
 int newkey( KEY_CODE* key ) {
     ALLEGRO_EVENT event;
-    if ( al_is_event_queue_empty(keyboardQueue) ) {
+    if ( al_is_event_queue_empty(ihm_context.keyboardQueue) ) {
         return (0);
     }
     else {
-        al_get_next_event(keyboardQueue, &event);
+        al_get_next_event(ihm_context.keyboardQueue, &event);
         
         if ( event.type == ALLEGRO_EVENT_KEY_CHAR ) {
             *key = event.keyboard.keycode;
@@ -216,11 +188,11 @@ int newkey( KEY_CODE* key ) {
  */
 int windowClosed() {
     ALLEGRO_EVENT event;
-    if ( al_is_event_queue_empty(displayQueue) ) {
+    if ( al_is_event_queue_empty(ihm_context.displayQueue) ) {
         return (0);
     }
     else {
-        al_get_next_event(displayQueue, &event);
+        al_get_next_event(ihm_context.displayQueue, &event);
         
         if ( event.type == ALLEGRO_EVENT_DISPLAY_CLOSE ) {
             return (1);
@@ -237,18 +209,18 @@ int windowClosed() {
  * \retval
  * 
  */
-int mouseClicked(ihm_lab* lab, int* posx, int* posy) {
+int mouseClicked(int* posx, int* posy) {
     ALLEGRO_EVENT event;
     
-    if ( al_is_event_queue_empty(mouseQueue) ) {
+    if ( al_is_event_queue_empty(ihm_context.mouseQueue) ) {
         return (0);
     }
     else {
-        al_get_next_event(mouseQueue, &event);
+        al_get_next_event(ihm_context.mouseQueue, &event);
         
         if ( event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP ) {
-            *posx = (int)((event.mouse.x - (lab->margex * _dimsprite)) / _dimsprite);
-            *posy = (int)((event.mouse.y - (lab->margey * _dimsprite)) / _dimsprite);
+            *posx = (int)((event.mouse.x - (ihm_context.margex * ihm_context.dimsprite)) / ihm_context.dimsprite);
+            *posy = (int)((event.mouse.y - (ihm_context.margey * ihm_context.dimsprite)) / ihm_context.dimsprite);
             return (1);
         }
     }

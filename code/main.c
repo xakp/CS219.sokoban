@@ -41,11 +41,8 @@ int main( int argc, char **argv )
     int posx, posy;
     KEY_CODE key_k;
     lvl_t *lvl = NULL;
-    ALLEGRO_BITMAP* background = NULL;
-    ihm_lab* lab = NULL;
     
-    ALLEGRO_DISPLAY* display = ihm_init(256, 256, 0);
-    assert (display != NULL) ;
+    assert ( ihm_init(256, 256, 0) == 0 ) ;
     
     
     /* ouvre le fichier de level */
@@ -69,7 +66,7 @@ int main( int argc, char **argv )
         printf("\n");
     }
     
-    lab = ihm_loadLab(lvl, -1, -1);
+    ihm_loadLab(lvl, -1, -1);
     
     
     if ( ihm_loadSpriteSheet("../data/_spritesheet.bmp", 32) != 0 ) {
@@ -80,8 +77,7 @@ int main( int argc, char **argv )
 
     run = 1;
     while ( !windowClosed() && run ) {
-        al_set_target_backbuffer(display);
-        ihm_drawSpriteInLab(NULL, 0, 0, 0);
+        ihm_drawSpriteInLab(0, 0, 0);
         al_flip_display();
         
         if ( newkey(&key_k) ) {
@@ -89,8 +85,8 @@ int main( int argc, char **argv )
                 run = 0;
         }
         
-        if ( mouseClicked(lab, &posx, &posy) ) {
-            printf("%d-%d\n", posx, posy);
+        if ( mouseClicked(&posx, &posy) ) {
+            printf("(%d,%d)\n", posx, posy);
         }
         
     }

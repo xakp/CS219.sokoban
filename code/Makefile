@@ -16,7 +16,7 @@ ifdef SystemRoot
 	LFLAGS= -lallegro-5.0.9-md  -lallegro-5.0.9-md -lallegro_image-5.0.9-md
 # linux
 else
-	shell export export LD_LIBRARY_PATH=/usr/lib/:$LD_LIBRARY_PATH
+	shell export LD_LIBRARY_PATH=/usr/lib/:$LD_LIBRARY_PATH
 	RM=rm -f 
 	EXEC=sokoban
 	LFLAGS= -lallegro -lallegro_image

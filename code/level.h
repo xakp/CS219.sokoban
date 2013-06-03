@@ -30,7 +30,7 @@
 
 /**
  * \enum cell
- * \brief 
+ * \brief les different trucs possible dans une cellule
  * 
  */
 typedef enum {
