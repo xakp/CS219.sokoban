@@ -3,7 +3,7 @@
  * \brief Mini-projet CS219 Sokoban
  * \author EYMARD Gabrielle - SCHLOTTERBECK Guillaume
  * \version 1.0
- * \date 03/04/2013
+ * \date 03/06/2013
  *
  */
 
@@ -13,7 +13,8 @@
 
 
 /** @defgroup log : Historique des coups joues
- * bla bla bla
+ * Permet de conserver en memoire chaque coup que le joueur aura effectue tout au long de la partie. Ainsi, il est possible de reveir en arriere ou de revenir sur le coup suivant.
+ * Remarque : Si le joueur revient en arriere et joue une nouveau coup, tous les coups suivants sauvegardes en memoire sont supprime pour que le coup qui veint d'etre joue devient le dernier coup joue. 
  */
 
 
@@ -22,14 +23,17 @@
  * \struct log_actions_t
  * \brief maillon
  */
-typedef struct {
+
+struct log_actions_t {
     /* donnees */
     void* data;             /*!< donne definissant un coup, a definir avec gab*/
 
     /* double chainage */
-    ActionsLog_t* next;   /*!< le coup suivant*/
-    ActionsLog_t* previous; /*!< Le coup precedent*/
-} log_actions_t;
+    struct log_actions_t* next;   /*!< le coup suivant*/
+    struct log_actions_t* previous; /*!< Le coup precedent*/
+};
+
+typedef struct log_actions_t log_actions_t;
 
 
 /**
@@ -38,30 +42,30 @@ typedef struct {
  * \brief 
  */
 typedef struct {
-    ActionsLog_t* start;    /*!< le coup selectionne*/
-    ActionsLog_t* end;      /*!< Le coup precedent*/
-    ActionsLog_t* selected; /*!< Le coup selectionne*/
+    log_actions_t* start;    /*!< le premier maillon de la liste*/
+    log_actions_t* end;      /*!< Le dernier maillon de la liste*/
+    log_actions_t* selected; /*!< Le maillon selectionne*/
 } log_t;
 
 
 /* instanciation */ 
-log_t*  log_create();
-int     log_destroy( log_t* );
+log_t*  log_create(); /*cree une instance de liste chainee*/
+int     log_destroy( log_t* ); /*Libere toute la liste chainee et l'instance de la liste*/
 
-/* move */
+/* deplacement du  curseur de selection */
 int     log_next( log_t* );
 int     log_previous( log_t* );
 int     log_start( log_t* );
 int     log_end( log_t* );
 
-/* insertion */
-int     log_insert after( log_t* , void* );
-int     log_insert before( log_t* , void* );
+/* insertion de coups, maillons */
+int     log_insertAfter( log_t* , void* );
+int     log_insertBefore( log_t* , void* ); /*pas utile maintenant*/
 
-/* suppression : libere les datas */
-int     log_freeSelected( log_t* );
+/* suppression : libere les datas, des maillons */
+int     log_freeSelected( log_t* ); /*Pas utile maintenant*/
 int     log_freeForward( log_t* );
-int     log_freeBackward( log_t* );
+int     log_freeBackward( log_t* ); /*Not now*/
 int     log_freeAll( log_t* );
 
 
