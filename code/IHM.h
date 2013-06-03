@@ -11,7 +11,11 @@
 #ifndef IHM_H
 #define IHM_H
 
+#include <stdlib.h>
+#include <assert.h>
+
 #include <allegro5/allegro5.h>
+#include <allegro5/allegro_image.h>
 
 
 typedef int KEY_CODE;

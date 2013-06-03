@@ -4,7 +4,7 @@ CC=gcc
 CFLAGS=-c -Wall -pedantic -Wno-long-long
 
 LD=gcc 
-LFLAGS= -lallegro-5.0.9-md 
+LFLAGS= -lallegro-5.0.9-md  -lallegro-5.0.9-md -lallegro_image-5.0.9-md
 
 
 MAKE=make

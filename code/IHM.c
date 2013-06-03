@@ -65,7 +65,7 @@ ALLEGRO_DISPLAY* ihm_init(int w, int h, int flags) {
     ALLEGRO_DISPLAY *display;
     
     /* init */
-    if ( !(al_init() && al_install_mouse() && al_install_keyboard()) ) {
+    if ( !(al_init() && al_install_mouse() && al_install_keyboard() && al_init_image_addon() ) ) {
         fprintf(stderr, "error init allegro or allegro's modules\n");
         return (NULL);
     }
@@ -145,7 +145,15 @@ int ihm_loadSpriteSheet(char* path, int dimsprite) {
  * 
  */
 ihm_lab* ihm_loadLab(lvl_t* lvl, int margex, int margey) {
-    return NULL;
+    
+    ihm_lab* lab = malloc( sizeof (ihm_lab) );
+    assert( lab != NULL );
+    
+    lab->lvl = lvl;
+    lab->margex = margex;
+    lab->margey = margey;
+    
+    return lab;
 }
 
 
@@ -168,6 +176,9 @@ void ihm_closelab( ihm_lab*  lab) {
  * 
  */
 int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp) {
+    
+    al_draw_bitmap(_spritesheet, 0, 0, 0);
+    
     return 0;
 }
 
@@ -188,9 +199,8 @@ int newkey( KEY_CODE* key ) {
         al_get_next_event(keyboardQueue, &event);
         
         if ( event.type == ALLEGRO_EVENT_KEY_CHAR ) {
-            if (event.keyboard.keycode == (int)key) {
-                return (1);
-            }
+            *key = event.keyboard.keycode;
+            return (1);
         }
     }
     return (0);
@@ -237,8 +247,8 @@ int mouseClicked(ihm_lab* lab, int* posx, int* posy) {
         al_get_next_event(mouseQueue, &event);
         
         if ( event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP ) {
-            *posx = (event.mouse.x - (lab->margex*_dimsprite)) / _dimsprite;
-            *posy = (event.mouse.y - (lab->margey*_dimsprite)) / _dimsprite;
+            *posx = (int)((event.mouse.x - (lab->margex * _dimsprite)) / _dimsprite);
+            *posy = (int)((event.mouse.y - (lab->margey * _dimsprite)) / _dimsprite);
             return (1);
         }
     }

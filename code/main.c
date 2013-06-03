@@ -20,9 +20,12 @@
 #include <string.h>
 #include <assert.h>
 
+
 #include <allegro5/allegro5.h>
 
+
 #include "level.h"
+#include "ihm.h"
 
 
 /**
@@ -33,12 +36,15 @@
  */
 int main( int argc, char **argv )
 {
-    int i;  
-    int j;  
+    int i, j;
+    int run;
+    int posx, posy;
+    KEY_CODE key_k;
     lvl_t *lvl = NULL;
     ALLEGRO_BITMAP* background = NULL;
+    ihm_lab* lab = NULL;
     
-    ALLEGRO_DISPLAY* display = ihm_init(500, 500, 0);
+    ALLEGRO_DISPLAY* display = ihm_init(256, 256, 0);
     assert (display != NULL) ;
     
     
@@ -58,13 +64,37 @@ int main( int argc, char **argv )
     
     /* l'affiche dans le terminal */
     for (i=0; lvl->dat[i] != NULL ; i++ ) {
-        for (j=0; lvl->dat[i][j] != NULL ; j++ ) 
+        for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) 
             putc( " @.$# "[ lvl->dat[i][j] ], stdout );
         printf("\n");
     }
-
-    while ( !windowClosed() );
     
+    lab = ihm_loadLab(lvl, -1, -1);
+    
+    
+    if ( ihm_loadSpriteSheet("../data/_spritesheet.bmp", 32) != 0 ) {
+        puts("erreur chargement spritesheet\n");
+        return (-1);
+    }
+    
+
+    run = 1;
+    while ( !windowClosed() && run ) {
+        al_set_target_backbuffer(display);
+        ihm_drawSpriteInLab(NULL, 0, 0, 0);
+        al_flip_display();
+        
+        if ( newkey(&key_k) ) {
+            if ( key_k == ALLEGRO_KEY_ESCAPE )
+                run = 0;
+        }
+        
+        if ( mouseClicked(lab, &posx, &posy) ) {
+            printf("%d-%d\n", posx, posy);
+        }
+        
+    }
+
 
     /* libere le level */
     lvl_closeLevel(lvl);
