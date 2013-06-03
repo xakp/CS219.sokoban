@@ -20,6 +20,30 @@
 
 #define BUFFER_SIZE 64
 
+#define ENCODE_WALL '#'     /* '#' */
+#define ENCODE_GROUND ' '   /* ' ' */
+#define ENCODE_TARGET '.'   /* '.' */
+#define ENCODE_BAG '$'      /* '$' */
+#define ENCODE_PLAYER '@'   /* '@' */
+
+
+
+/**
+ * \enum cell
+ * \brief 
+ * 
+ */
+typedef enum {
+    lvl_NULL = 0,     /*!< Sentinelle. */
+    lvl_PLAYER,
+    lvl_TARGET,
+    lvl_BAG,
+    lvl_WALL,
+    lvl_GROUND
+} lvl_cell;
+
+
+
 /**
  * \struct Level
  * \brief contient les infos necessaires au niveau
@@ -27,16 +51,16 @@
  */
 typedef struct {
     uint16_t num;   /*!< Contient le numero du niveau. */
-    char **dat;     /*!< Tableau 2D vers les elements du niveau. */
-} Level;
+    lvl_cell **dat;     /*!< Tableau 2D vers les elements du niveau. */
+} lvl_t;
 
 
 
-int8_t openFileLvl( char *file );
-void closeFileLvl();
+int8_t lvl_openFileLvl( char *file );
+void lvl_closeFileLvl();
 
-Level* readLevel( int16_t num );
-void closeLevel(Level* lvl);
+lvl_t* lvl_readLevel( int16_t num );
+void lvl_closeLevel(lvl_t* lvl);
 
 
 #endif

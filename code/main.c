@@ -34,31 +34,44 @@
 int main( int argc, char **argv )
 {
     int i;  
-    Level *lvl = NULL;
+    int j;  
+    lvl_t *lvl = NULL;
+    ALLEGRO_DISPLAY* display = NULL;
+    ALLEGRO_BITMAP* background = NULL;
     
-    if (openFileLvl("../data/levels.lvl") != 0) {
+    
+    /* ouvre le fichier de level */
+    if (lvl_openFileLvl("../data/levels.lvl") != 0) {
         puts("erreur\n");
+        return (-1);
     }
     
-    lvl = readLevel(2);
-    
+    /* lit un level et test l'ouveture */
+    lvl = lvl_readLevel(2);
     if (lvl == NULL) {
         puts("lecture impossible\n");
-        return -1;
+        return (-1);
     }
     
-
+    
+    /* l'affiche dans le terminal */
     for (i=0; lvl->dat[i] != NULL ; i++ ) {
-        printf("-%s-\n", lvl->dat[i]);
+        for (j=0; lvl->dat[i][j] != NULL ; j++ ) 
+            putc( " @.$# "[ lvl->dat[i][j] ] );
+        printf("\n");
     }
+
     
     /* libere le level */
-    closeLevel(lvl);
+    lvl_closeLevel(lvl);
     
     /* non implemente */
-    closeFileLvl();
+    lvl_closeFileLvl();
     
     return (0);
 }
 
+
+
+ 
 

@@ -1,7 +1,7 @@
 
 
 CC=gcc 
-CFLAGS=-c -Wall -pedantic -Wno-long-long 
+CFLAGS=-c -Wall -pedantic -Wno-long-long -g 
 
 LD=gcc 
 LFLAGS= -lallegro -lallegro_main
@@ -9,7 +9,7 @@ LFLAGS= -lallegro -lallegro_main
 
 MAKE=make
 
-OBJ=main.o level.o
+OBJ=main.o level.o IHM.o
 
 
 # windows

@@ -11,7 +11,7 @@
 
 /**
  * \struct Datafile
- * \brief 
+ * \brief static....
  * 
  */
 static struct datafile_t {
@@ -23,11 +23,11 @@ static struct datafile_t {
 
 
 /**
- * \fn int8_t openFileLvl( char *file );
+ * \fn int8_t lvl_openFileLvl( char *file );
  * \brief ouvre le fichier de levels
  * 
  */
-int8_t openFileLvl( char *file )
+int8_t lvl_openFileLvl( char *file )
 {
     /* buffer pour lire les lignes */
     char buff[BUFFER_SIZE];
@@ -55,12 +55,12 @@ int8_t openFileLvl( char *file )
 
 
 /**
- * \fn Level* readLevel( char *file, uint16_t num );
+ * \fn lvl_t* readLevel( char *file, uint16_t num );
  * \brief Creer un objet %Level
  * 
  * C'est tres pratique !!
  */
-Level* readLevel( int16_t num )
+lvl_t* lvl_readLevel( int16_t num )
 {
     /* buffer pour lire les lignes */
     char buff[BUFFER_SIZE];
@@ -71,8 +71,9 @@ Level* readLevel( int16_t num )
     uint16_t nbL = 0;
     uint16_t l;
     uint16_t len;
-    Level* lvl = NULL;
-    assert( lvl = malloc( sizeof (Level) ) );
+    int i;
+    lvl_t* lvl = NULL;
+    assert( lvl = malloc( sizeof (lvl_t) ) );
     
     /* creer le motif pour rechercher le niveau */
     sprintf(motif, ";LEVEL %d\n", num);
@@ -129,12 +130,34 @@ Level* readLevel( int16_t num )
         
         len = strlen(buff);
         /* on allou et verivie l'allocation de la ligne */
-        assert( lvl->dat[l] = malloc( (len) * sizeof (char) ) );
+        assert( lvl->dat[l] = malloc( (len) * sizeof (lvl_cell) ) );
         
         /* on remplie la ligne */
-        buff[len-1] = '\0';
-        strcpy(lvl->dat[l], buff);
-    }
+        for (i=0 ; i<len ; i++) {
+            switch ( buff[i] ) {
+                case ENCODE_WALL:
+                    lvl->dat[l][i] = lvl_WALL;
+                    break;
+                case ENCODE_TARGET:
+                    lvl->dat[l][i] = lvl_TARGET;
+                    break;
+                case ENCODE_BAG:
+                    lvl->dat[l][i] = lvl_BAG;
+                    break;
+                case ENCODE_PLAYER:
+                    lvl->dat[l][i] = lvl_PLAYER;
+                    break;
+                case ENCODE_GROUND:
+                default:
+                    lvl->dat[l][i] = lvl_GROUND;
+                    break;
+            
+            }/* end switch */
+        }/* end for */
+        
+        lvl->dat[l][len-1] = lvl_NULL;
+        
+    }/* end for */
     
     lvl->dat[nbL] = NULL;
     lvl->num = num;
@@ -143,25 +166,23 @@ Level* readLevel( int16_t num )
 }
 
 
-
-
 /**
- * \fn void closeFileLvl();
+ * \fn void lvl_closeFileLvl();
  * \brief ferme le fichier de levels
  * 
  */
-void closeFileLvl() {
+void lvl_closeFileLvl() {
     fclose(datafile.fd);
 }
 
 /**
- * \fn void closeLevel();
+ * \fn void lvl_closeLevel();
  * \brief Libere le level
  * \param Level a liberer
  * 
  */
-void closeLevel(Level* lvl) {
-    char** l;
+void lvl_closeLevel(lvl_t* lvl) {
+    lvl_cell** l;
     l = lvl->dat;
     
     /* libere les lignes */
