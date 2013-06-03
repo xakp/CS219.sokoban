@@ -25,7 +25,7 @@
 
 
 #include "level.h"
-#include "ihm.h"
+#include "IHM.h"
 
 
 /**
