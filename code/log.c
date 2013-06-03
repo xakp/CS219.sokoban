@@ -12,36 +12,54 @@
 #include "log.h"
 
 /**
- * \fn static void _log_freeElt(log_actions_t* logDelete)
- * \brief supprime un maillon
- * \param maillon a supprimer
+ * \fn static void _log_freeEltsForward(log_actions_t* logDelete)
+ * \brief Supprime le maillon suivant
+ * \param Maillon a supprimer
  * Cette fonction est statique car elle ne doit pas etre utilisee ailleurs. L'utilisateur doit passer seulement par les fonctions proposees.
  *
  */
  
-static void _log_freeElt(log_actions_t* logDelete)
+static void _log_freeEltsForward(log_actions_t* logDelete)
 {
     if (logDelete->next != NULL)
     {
-        _log_freeElt(logDelete->next); /*Recusrivite : on l'appelle a chaque fois pour l'elt suivant, jusqu'a ce qu'on se situe au dernier elt de la chaine*/
+        _log_freeEltsForward(logDelete->next); /*Recusrivite : on l'appelle a chaque fois pour l'elt suivant, jusqu'a ce qu'on se situe au dernier elt de la chaine*/
+    }
+    free(logDelete->data); /*On libere la donnee de chaque maillon*/
+    free(logDelete); /*On libere chaque maillon*/
+}
+
+/**
+ * \fn static void _log_freeEltsBackward(log_actions_t* logDelete)
+ * \brief Supprime le maillon precedent
+ * \param Maillon a supprimer
+ * Cette fonction est statique car elle ne doit pas etre utilisee ailleurs. L'utilisateur doit passer seulement par les fonctions proposees.
+ *
+ */
+ 
+static void _log_freeEltsBackward(log_actions_t* logDelete)
+{
+    if (logDelete->previous != NULL)
+    {
+        _log_freeEltsBackward(logDelete->previous); /*Recusrivite : on l'appelle a chaque fois pour l'elt suivant, jusqu'a ce qu'on se situe au dernier elt de la chaine*/
     }
     free(logDelete->data); /*On libere la donnee de chaque maillon*/
     free(logDelete); /*On libere chaque maillon*/
 }
 /* *************************************************** */
-/* ****************** instanciation ****************** */ 
+/* ****************** Instanciation ****************** */ 
 /* *************************************************** */
 
 /**
  * \ingroup log
  * \fn log_t* log_create()
  * \brief Creer une liste doublement chainee vide
- * \retval pointeur sur la liste nouvellement cree
+ * \retval Pointeur sur la liste nouvellement cree
  * 
  */
 log_t* log_create() 
 {
-    log_t *logCreated = malloc (sizeof(log_t*)); /*on alloue de la memoire de la taille d'un log_t*/
+    log_t *logCreated = malloc (sizeof (log_t*) ); /*on alloue de la memoire de la taille d'un log_t*/
     assert(logCreated != NULL);/*On verifie si l'allocation a bien ete faite, on arrete le programme sinon*/
     return (logCreated); /*On retourne l'element cree*/
 }
@@ -49,11 +67,11 @@ log_t* log_create()
 /**
  * \ingroup log
  * \fn int log_destroy( log_t* )
- * \brief detruit la liste
- * \param la liste a detruire
- * \retval code d'erreur
- * renvoie 0 si succes
- * renvoie une valeur differente de 0 si echec
+ * \brief Detruit la liste
+ * \param La liste a detruire
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
 int log_destroy( log_t* log ) 
@@ -63,7 +81,7 @@ int log_destroy( log_t* log )
         return (-1);
     }
     
-    if (log->start != NULL) /*Si le premier element de la chaine n'est nul, on supprime les maillons*/
+    if (log->start != NULL) /*Si le premier element de la chaine n'est pas nul, on supprime les maillons*/
     {
         _log_freeElt(log->start); /*Appel de la fonction supprimant les maillons*/
     }
@@ -80,27 +98,30 @@ int log_destroy( log_t* log )
 /**
  * \ingroup log
  * \fn int log_next( log_t* )
- * \brief selectionne l'element suivant de la liste
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Selectionne l'element suivant de la liste
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
 int log_next( log_t* log ) 
 {
-    if (log == NULL) /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    if (log == NULL) 
     {
         return (-1);
     }
     
-    if ( (log->selected)->next != NULL) /*Si l'elt selectionne n'est pas le dernier de la liste chainee*/
+    /*Si l'elt selectionne n'est pas le dernier de la liste chainee*/
+    if ( (log->selected)->next != NULL) 
     {
         log->selected=(log->selected)->next; /*On decale le curseur sur l'elt suivant*/
         return (0);
     } 
     
-    else /*Si l'elt selectionne est le dernier, on retourne une erreur*/
+    /*Si l'elt selectionne est le dernier, on retourne une erreur*/
+    else 
     {
         return (-1);
     }
@@ -109,54 +130,64 @@ int log_next( log_t* log )
 /**
  * \ingroup log
  * \fn int log_previous( log_t* )
- * \brief selectionne l'element precedent de la liste
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Selectionne l'element precedent de la liste
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
 int log_previous( log_t* log ) 
 {
-    if (log == NULL) /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
     {
         return (-1);
     }
     
-    if ( (log->selected)->previous != NULL) /*Si l'elt selectionne n'est pas le premier de la liste chainee*/
+    /*Si l'elt selectionne n'est pas le premier de la liste chainee*/
+    if ( (log->selected)->previous != NULL) 
     {
         log->selected=(log->selected)->previous; /*On decale le curseur sur l'elt suivant*/
         return (0);
     } 
-    else /*Si l'elt selectionne est le premier, on retourne une erreur*/
+    
+    /*Si l'elt selectionne est le premier, on retourne une erreur*/
+    else
     {
         return (-1);
     }
+    
     return (0);
 }
 
 /**
  * \ingroup log
  * \fn int log_start( log_t* )
- * \brief selectionne le premier element de la liste
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Selectionne le premier element de la liste
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
 int log_start( log_t* log ) 
-{
-     if (log == NULL) /*Si la chaine passee en paramètre est vide, on retourne -1*/
+{ 
+    /*Si la chaine passee en paramètre est vide, on retourne -1*/
+     if (log == NULL)
     {
         return (-1);
     }
-    if (log->start !=NULL) /*S'il existe un premier elt*/
+    
+    /*S'il existe un premier elt*/
+    if (log->start !=NULL)
     {
         log->selected = log->start; /*On déplace le curseur sur le premier elt*/
         return (0);
     }
-    else /*S'il n'existe pas de premier elt, on retourne une erreur*/
+    
+    /*S'il n'existe pas de premier elt, on retourne une erreur*/
+    else
     {
         return (-1);
     }
@@ -165,25 +196,30 @@ int log_start( log_t* log )
 /**
  * \ingroup log
  * \fn int log_end( log_t* )
- * \brief selectionne le dernier element de la liste
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Selectionne le dernier element de la liste
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
 int log_end( log_t* log ) 
 {
-     if (log == NULL) /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
     {
         return (-1);
     }
-    if (log->end !=NULL) /*S'il existe un dernier elt*/
+    
+    /*S'il existe un dernier elt*/
+    if (log->end !=NULL) 
     {
         log->selected = log->end; /*On déplace le curseur sur le dernier elt*/
         return (0);
     }
-    else /*S'il n'existe pas de dernier elt, on retourne une erreur*/
+    
+    /*S'il n'existe pas de dernier elt, on retourne une erreur*/
+    else 
     {
         return (-1);
     }
@@ -197,25 +233,50 @@ int log_end( log_t* log )
 /**
  * \ingroup log
  * \fn int log_insertAfter( log_t* , void* )
- * \brief ajout la donnee apres l'element selecionnee
- * \param la liste
- * \param la donnee
- * \retval code d'erreur
- * renvoie 0 si succes
- * renvoie une valeur differente de 0 si echec
+ * \brief Ajout la donnee apres l'element selecionnee
+ * \param La liste
+ * \param La donnee
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
-int log_insertAfter( log_t* log, void* data) 
+int log_insertAfter( log_t* log, void* dataInsert) 
 {
-     if (log == NULL) /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    /*Si la chaine passee en paramètre est vide, on retourne -1*/
+    if (log == NULL) 
     {
         return (-1);
     }
+    
+    log_actions_t *eltInsert = malloc (sizeof(log_actions_t)); /*On verifie si l'allocation memoire a bien ete faite*/
+    assert (eltInsert != NULL);
+    eltInsert->data = dataInsert; /*On insere la donnee*/
+    
+    /*Si la chaine est vide*/
+    if (log->start == NULL) 
+    {
+        eltInsert = log->start;
+        eltInsert = log->selected;
+        eltInsert = log->end;
+    }
+    
+    /*Si l'elt selectionne est le dernier*/
+    else if ( ((log->selected)->next) == NULL )
+    {
+        eltInsert->previous = log->selected; /*On fait pointer l'elt precedent de l'elt insere sur l'elt selectionne*/
+        eltInsert->next = NULL; /*Comme c'est le dernier, il n'y a pas d'element suivant, le pointeur est donc nul*/
+        (log->selected)->next = eltInsert; /*On fait pointer l'elt suivant de l'elt selectionne sur le nvl elt*/  
+        log->end = eltInsert; /*Maintenant, l'elt insere est le dernier, il faut donc le preciser !*/
+    }
+    
+    /*Cas general*/
     else
     {
-        log_actions_t *eltInsert = malloc (sizeof(log_actions_t));
-        assert (eltInsert !=NULL);
-        
+        ((log->selected)->next)->previous = eltInsert; /*On fait pointer l'elt suivant sur notre nouvel elt insere*/
+        eltInsert->previous = log->selected; /*On fait pointer l'elt precedent de l'elt insere sur l'elt selectionne*/
+        eltInsert->next = (log->selected)->next; /*On fait pointer l'elt suivant de l'elt inserer sur l'elt suivant de l'elt selectionne*/
+        (log->selected)->next = eltInsert; /*On fait pointer l'elt suivant de l'elt selectionne sur le nvl elt*/
     }
     return (0);
 }
@@ -223,16 +284,51 @@ int log_insertAfter( log_t* log, void* data)
 /**
  * \ingroup log
  * \fn int log_insertBefore( log_t* log, void* data )
- * \brief ajout la donnee avant l'element selecionnee
- * \param la liste
- * \param la donnee
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Ajout la donnee avant l'element selecionnee
+ * \param La liste
+ * \param La donnee
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
  */
-int log_insertBefore( log_t* log, void* data ) 
+int log_insertBefore( log_t* log, void* dataInsert ) 
 {
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
+    {
+        return (-1);
+    }
+    
+    log_actions_t *eltInsert = malloc (sizeof (log_actions_t) ); /*On verifie si l'allocation mem a ete faite*/
+    assert (eltInsert != NULL);
+    eltInsert->data = dataInsert; /*On insere la donnee*/
+    
+    /*Si la chaine est vide*/
+    if (log->start == NULL) 
+    {
+        eltInsert = log->start;
+        eltInsert = log->selected;
+        eltInsert = log->end;
+    }
+    
+    /*Si l'elt selectionne est le premier*/
+    else if (((log->selected)->previous) == NULL)
+    {
+        eltInsert->previous = NULL; /*Comme c'est le premier, il n'y a pas d'element precedant, le pointeur est donc nul*/
+        eltInsert->next = log->selected; /*On fait pointer l'elt suivant de l'elt insere sur l'elt selectionne*/
+        (log->selected)->previous = eltInsert; /*On fait pointer l'elt suivant de l'elt selectionne sur le nvl elt*/   
+        log->start = eltInsert; /*Maintenant, l'elt insere est le premier, il faut donc le preciser !*/
+    }
+    
+    /*Cas general*/
+    else
+    {
+       eltInsert->next = log->selected; /*On fait pointer l'elt suivant sur l'elt selectionne*/
+       eltInsert->previous = ((log->selected)->previous); /*On fait pointer l'elt precedent sur l'elt precedent de l'elt selectionne*/
+       ((log->selected)->previous)->next = eltInsert; /*On fait pointer l'elt suivant de l'elt precedent de l'elt pointe sur l'elt insere*/
+       ((log->selected)->previous) = eltInsert; /*On fait pointer l'elt precedent de l'elt selectionne sur l'elt insere*/
+    }
     return (0);
 }
 
@@ -243,67 +339,120 @@ int log_insertBefore( log_t* log, void* data )
  /**
  * \ingroup log
  * \fn int log_freeSelected( log_t* ) 
- * \brief detruit l'element selectionnee
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Detruit l'element selectionne
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
- * l'element selectionne sera le precedent, si il n'y a pas de precedent, alors ce sera le suivant, sinon, #selected vaudra NULL
- * \attention libere la memoire associee a la donnee
+ * L'element selectionne sera le precedent, s'il n'y a pas de precedent, alors ce sera le suivant, sinon, #selected vaudra NULL
+ * \attention Libere la memoire associee a la donnee
  */
 int log_freeSelected( log_t* log ) 
 {
-    return (NULL);
+    log_actions_t *tmp = NULL; 
+    
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
+    {
+        return (-1);
+    }
+    
+    tmp = log->selected;/*On memorise l'elt selectionne*/
+    
+    /*Si l'elt selectionne est le dernier*/
+    if ((log->selected)->next == NULL)
+    {
+        ((log->selected)->previous)->next = NULL; /*On refait les liens*/
+        log->selected = (log->selected)->previous;
+    }
+    
+    /*Si l'elt selectionne est le premier*/
+    if ((log->selected)->previous == NULL)
+    {
+       ((log->selected)->next)->previous = NULL ;/*On refait les liens*/
+       log->selected = (log->selected)->next;   
+    }
+    
+    /*Cas general*/
+    else
+    {
+        ((log->selected)->previous)->next = (log->selected)->next; /*On refait les liens*/
+        ((log->selected)->next)->previous = (log->selected)->previous ;
+        log->selected = (log->selected)->previous;
+    }
+        
+    free(tmp->data);
+    free(tmp);
+    return (0);
 }
 
 /**
  * \ingroup log
  * \fn int log_freeForward( log_t* )
- * \brief detruit les elements suivant l'element selectionnee
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Detruit les elements suivant l'element selectionne
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
- * l'element selectionne n'est pas detruit
- * \attention libere la memoire associee a la donnee
+ * L'element selectionne n'est pas detruit
+ * \attention Libere la memoire associee a la donnee
  */
 int log_freeForward( log_t* log ) 
 {
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
+    {
+        return (-1);
+    }
+    _log_freeEltsForward((log->selected)->next); /*On appelle la fonction qui supprime les maillons suivants l'elt selectionne car on passe next en parametre*/
     return (0);
 }
 
 /**
  * \ingroup log
  * \fn int log_freeBackward( log_t* )
- * \brief detruit les elements precedent l'element selectionnee
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Detruit les elements precedent l'element selectionne
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
- * l'element selectionne n'est pas detruit
- * \attention libere la memoire associee a la donnee
+ * L'element selectionne n'est pas detruit
+ * \attention Libere la memoire associee a la donnee
  */
 int log_freeBackward( log_t* log ) 
 {
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
+    {
+        return (-1);
+    }
+    
+    _log_freeEltsBackward((log->selected)->previous); /*On appelle la fonction qui supprime les maillons precedant l'elt selectionne car on passe previous en parametre*/
     return (0);
 }
 
 /**
  * \ingroup log
  * \fn int log_freeAll( log_t* )
- * \brief detruit tous les elements
- * \param la liste
- * \retval code d'erreur
- * renvoie 0 si succee
- * renvoie une valeur differente de 0 si echec
+ * \brief Detruit tous les elements
+ * \param La liste
+ * \retval Code d'erreur
+ * Renvoie 0 si succes
+ * Renvoie une valeur differente de 0 si echec
  * 
- * \attention libere la memoire associee a la donnee
+ * \attention Libere la memoire associee a la donnee
  */
 int log_freeAll( log_t* log ) 
 {
+    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    if (log == NULL) 
+    {
+        return (-1);
+    }
+    _log_freeEltsForward(log->start); /*On supprime tout a partir du maillon start et lui meme*/
     return (0);
 }
 
