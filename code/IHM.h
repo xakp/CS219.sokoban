@@ -14,14 +14,16 @@
 #include <allegro5/allegro5.h>
 
 
+typedef int KEY_CODE;
 
 
 #include "level.h"
 
 typedef struct {
+    lvl_t* lvl;
     ALLEGRO_BITMAP* background;
-    int offsetx;
-    int offsety;
+    int margex; /*!< en nombre de cellules de GROUND. */
+    int margey; /*!< en nombre de cellules de GROUND. */
     
 } ihm_lab;
 
@@ -42,11 +44,21 @@ typedef enum {
 } Sprites;
 
 
-int loadSpriteSheet(char* path, int dimsprite);
+/* initialise allegro ET le module clavier d'allegro, creer une pile en globale static ET lespiles d'events de display... */
+ALLEGRO_DISPLAY* ihm_init(int w, int h, int flags);
+void ihm_close();
 
-ihm_lab* ihm_loadLab(lvl_t* lvl);
-int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp);
+/* Fonctions relatives a l'affichage. */
+int         ihm_loadSpriteSheet(char* path, int dimsprite);
+ihm_lab*    ihm_loadLab(lvl_t* lvl, int margex, int margey);
+void        ihm_closelab( ihm_lab* );
+int         ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp);
 
+
+/* Fonctions relatives aux evenements */
+int     newkey( KEY_CODE* );
+int     windowClosed();
+int     mouseClicked(ihm_lab* , int*, int*);
 
 
 

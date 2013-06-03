@@ -36,8 +36,10 @@ int main( int argc, char **argv )
     int i;  
     int j;  
     lvl_t *lvl = NULL;
-    ALLEGRO_DISPLAY* display = NULL;
     ALLEGRO_BITMAP* background = NULL;
+    
+    ALLEGRO_DISPLAY* display = ihm_init(500, 500, 0);
+    assert (display != NULL) ;
     
     
     /* ouvre le fichier de level */
@@ -57,11 +59,13 @@ int main( int argc, char **argv )
     /* l'affiche dans le terminal */
     for (i=0; lvl->dat[i] != NULL ; i++ ) {
         for (j=0; lvl->dat[i][j] != NULL ; j++ ) 
-            putc( " @.$# "[ lvl->dat[i][j] ] );
+            putc( " @.$# "[ lvl->dat[i][j] ], stdout );
         printf("\n");
     }
 
+    while ( !windowClosed() );
     
+
     /* libere le level */
     lvl_closeLevel(lvl);
     

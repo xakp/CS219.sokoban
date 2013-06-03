@@ -1,10 +1,10 @@
 
 
 CC=gcc 
-CFLAGS=-c -Wall -pedantic -Wno-long-long -g 
+CFLAGS=-c -Wall -pedantic -Wno-long-long
 
 LD=gcc 
-LFLAGS= -lallegro -lallegro_main
+LFLAGS= -lallegro-5.0.9-md 
 
 
 MAKE=make
