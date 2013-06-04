@@ -29,6 +29,6 @@ make
 #install allegro
 sudo make install
 
-cls 
+clear
 
 cowsay "Allegro is installed"
