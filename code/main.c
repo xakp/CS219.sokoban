@@ -52,7 +52,7 @@ int main( int argc, char **argv )
     }
     
     /* lit un level et test l'ouveture */
-    lvl = lvl_readLevel(2);
+    lvl = lvl_readLevel(54);
     if (lvl == NULL) {
         puts("lecture impossible\n");
         return (-1);
@@ -66,28 +66,37 @@ int main( int argc, char **argv )
         printf("\n");
     }
     
-    ihm_loadLab(lvl, -1, -1);
     
-    
-    if ( ihm_loadSpriteSheet("../data/_spritesheet.bmp", 32) != 0 ) {
+    if ( ihm_loadSpriteSheet("../data/spritesheet.png", 32) != 0 ) {
         puts("erreur chargement spritesheet\n");
         return (-1);
     }
     
+    ihm_loadLab(lvl, 1, 1, 5);
 
+    i = 0;
+    j = 0;
+    
     run = 1;
     while ( !windowClosed() && run ) {
-        ihm_drawSpriteInLab(0, 0, 0);
-        al_flip_display();
-        
+
         if ( newkey(&key_k) ) {
             if ( key_k == ALLEGRO_KEY_ESCAPE )
                 run = 0;
+            else if ( key_k == ALLEGRO_KEY_Z ) j--;
+            else if ( key_k == ALLEGRO_KEY_Q ) i--;
+            else if ( key_k == ALLEGRO_KEY_S ) j++;
+            else if ( key_k == ALLEGRO_KEY_D ) i++;
         }
         
         if ( mouseClicked(&posx, &posy) ) {
             printf("(%d,%d)\n", posx, posy);
         }
+        
+        ihm_drawBackgournd();
+        ihm_drawSpriteInLab(i, j, ihm_PLAYER_LEFT);
+        al_flip_display(); 
+        
         
     }
 
