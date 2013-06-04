@@ -13,6 +13,8 @@
 #include "log.h"
 
 
+void _log_view(log_t*);
+
 
 int main (int argc, char* argv[]) 
 {
@@ -23,26 +25,38 @@ int main (int argc, char* argv[])
     
     assert( d1 && d2 && d3 );
     
-    *d1 = 25;
-    *d2 = 26;
-    *d3 = 27;
+    *d1 = 1;
+    *d2 = 10;
+    *d3 = 100;
     
     /*Test des fonctions log_create et log_insertAfter*/
     log = log_create( sizeof (int) );
-    printf("log created\n");
+    if (log != NULL) printf("log created\n");
+    else return -1;
     
     /*25 est à la fois start, selected et end car seul maillon de la chaine*/
     log_insertAfter( log, ((void*)d1) );
-    printf ("start(%d)  end(%d)  select(%d)\n", (int)(*((int*)(log->start)->data)), (int)(*((int*)(log->end)->data)), (int)(*((int*)(log->selected)->data)));
+    printf("a "); _log_view(log);
+
 
     /*Test de log_insertBefore : cas elt selected est premier */
-    log_insertBefore( log, ((void*)d2) );
-    printf ("start(%d)  end(%d)  select(%d)\n", (int)(*((int*)(log->start)->data)), (int)(*((int*)(log->end)->data)), (int)(*((int*)(log->selected)->data)));
-
+    log_insertAfter( log, ((void*)d2) );
+    printf("b "); _log_view(log);
+    
+    log_next(log);
+    log_freeSelected(log);
+    printf("B "); _log_view(log);
+    
     /*Test de log_insertBefore : cas elt selected milieu */
     log_insertBefore( log , ((void*)d3) );
     log_previous( log );
-    printf ("start(%d)  end(%d)  select(%d)\n", (int)(*((int*)(log->start)->data)), (int)(*((int*)(log->end)->data)), (int)(*((int*)(log->selected)->data)));
+    printf("c "); _log_view(log);
+    
+    /*Test de log_insertBefore : cas elt selected milieu */
+    log_end( log );
+    printf("d "); _log_view(log);
+    
+
 
     /*Test de la fct de sauvegarde*/
     log_save( log, "save1" );
@@ -54,7 +68,7 @@ int main (int argc, char* argv[])
     
     /*Test de la fct de chargement*/
     log = log_load( "save1", sizeof(int) );
-    printf("%d", *((int*)(log->selected)->data) );
+    _log_view(log);
     
 
 
@@ -65,26 +79,33 @@ int main (int argc, char* argv[])
 
 
 
-
-
-
-
-/*Brouillon test marche pas */
-    /*char str[]="abcde"; liste de caractere a placer dans les maillons
-    char *p = str;
-    void* data;*/ 
-    /*for (p = str; (*p) != '\0'; p++)
-    {
-        data = malloc( sizeof (char) );
-        assert(data != NULL);
-        log_insertAfter(log, data );
-        
-        
-        *((char*)((log->selected)->data)) = *p;
+void _log_view(log_t* log) {
+    log_actions_t* a = NULL;
+    
+    assert( log != NULL);
+    
+    if (log->start == NULL) {
+        printf("log empty\n");
+        return;
     }
     
-    for ( log_start(log) ; (log->selected)->next != NULL ; log_next(log) )
-    {
-        printf ("%c\n", *(char*)((log->selected)->data) );
+    a = log->start;
+    while( a != NULL ) {
+        if ( a == log->selected ) {
+            printf("(%d) ", (int)(*((int*)a->data)));
+        }
+        else {
+            printf("%d ", (int)(*((int*)a->data)));
+        }
+        a = a->next;
     }
-    */
+    printf("\n");
+}
+
+
+
+
+
+
+
+

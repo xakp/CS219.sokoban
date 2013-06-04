@@ -4,9 +4,9 @@ CC=gcc
 LD=gcc 
 MAKE=make
 
-OBJ=main.o level.o IHM.o
+OBJ=main.o level.o IHM.o log.o
 
-CFLAGS=-c -Wall -pedantic -Wno-long-long -g
+CFLAGS=-c -Wall -pedantic -Wno-long-long 
 
 
 # windows

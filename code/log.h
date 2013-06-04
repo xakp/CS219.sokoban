@@ -11,6 +11,7 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <stdlib.h>
 #include <assert.h>
 
 
@@ -52,27 +53,27 @@ typedef struct {
 
 /* <instanciation */ 
 log_t*  log_create(size_t); /*Cree une instance de liste chainee*/
-int     log_destroy( log_t* ); /*Libere toute la liste chainee et l'instance de la liste*/
+void    log_destroy( log_t* ); /*Libere toute la liste chainee et l'instance de la liste*/
 
 /*Enregistrement et chargement de la chaine*/
-int     log_save( log_t*, char* ); /*Permet de sauvegarder la partie souhaitee*/
+void    log_save( log_t*, char* ); /*Permet de sauvegarder la partie souhaitee*/
 log_t*  log_load( char*, size_t ); /*Permet de charger la partie souhaitee*/
 
 /* Deplacement du  curseur de selection */
-int     log_next( log_t* );
-int     log_previous( log_t* );
-int     log_start( log_t* );
-int     log_end( log_t* );
+void    log_next( log_t* );
+void    log_previous( log_t* );
+void    log_start( log_t* );
+void    log_end( log_t* );
 
 /* Insertion de coups, maillons */
-int     log_insertAfter( log_t* , void* );
-int     log_insertBefore( log_t* , void* ); /*pas utile maintenant*/
+void    log_insertAfter( log_t* , void* );
+void    log_insertBefore( log_t* , void* ); /*pas utile maintenant*/
 
 /* Suppression : libere les datas, des maillons */
-int     log_freeSelected( log_t* ); /*Pas utile maintenant*/
-int     log_freeForward( log_t* );
-int     log_freeBackward( log_t* ); /*Not now*/
-int     log_freeAll( log_t* );
+void    log_freeSelected( log_t* ); /*Pas utile maintenant*/
+void    log_freeForward( log_t* );
+void    log_freeBackward( log_t* ); /*Not now*/
+void    log_freeAll( log_t* );
  
 
 
