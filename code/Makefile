@@ -24,9 +24,13 @@ endif
 
 
 all: $(OBJ)
-	$(LD) $(OBJ) $(LFLAGS) -o $(EXEC) $
+	$(LD) $^ $(LFLAGS) -o $(EXEC)
 %o: %c
 	$(CC) $^ $(CFLAGS) -o $@
+
+tu: testsUnitaires.o log.o
+	$(LD) $^ $(LFLAGS)
+
 
 clean:
 	$(RM) $(OBJ)
