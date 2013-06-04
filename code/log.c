@@ -61,6 +61,10 @@ log_t* log_create()
 {
     log_t *logCreated = malloc (sizeof (log_t*) ); /*on alloue de la memoire de la taille d'un log_t*/
     assert(logCreated != NULL);/*On verifie si l'allocation a bien ete faite, on arrete le programme sinon*/
+    logCreated->start = NULL;
+    logCreated->end = NULL;
+    logCreated->selected = NULL;
+    
     return (logCreated); /*On retourne l'element cree*/
 }
 
@@ -83,7 +87,7 @@ int log_destroy( log_t* log )
     
     if (log->start != NULL) /*Si le premier element de la chaine n'est pas nul, on supprime les maillons*/
     {
-        _log_freeElt(log->start); /*Appel de la fonction supprimant les maillons*/
+        _log_freeEltsForward(log->start); /*Appel de la fonction supprimant les maillons*/
     }
     free (log); /*Liberation de la liste*/
     return (0);
@@ -249,16 +253,16 @@ int log_insertAfter( log_t* log, void* dataInsert)
         return (-1);
     }
     
-    log_actions_t *eltInsert = malloc (sizeof(log_actions_t)); /*On verifie si l'allocation memoire a bien ete faite*/
+    log_actions_t *eltInsert = malloc(sizeof (log_actions_t) ); /*On verifie si l'allocation memoire a bien ete faite*/
     assert (eltInsert != NULL);
     eltInsert->data = dataInsert; /*On insere la donnee*/
     
     /*Si la chaine est vide*/
     if (log->start == NULL) 
     {
-        eltInsert = log->start;
-        eltInsert = log->selected;
-        eltInsert = log->end;
+       log->start = eltInsert ;
+       log->selected = eltInsert ;
+       log->end =  eltInsert;
     }
     
     /*Si l'elt selectionne est le dernier*/
@@ -307,9 +311,9 @@ int log_insertBefore( log_t* log, void* dataInsert )
     /*Si la chaine est vide*/
     if (log->start == NULL) 
     {
-        eltInsert = log->start;
-        eltInsert = log->selected;
-        eltInsert = log->end;
+       log->start = eltInsert ;
+       log->selected = eltInsert ;
+       log->end =  eltInsert;
     }
     
     /*Si l'elt selectionne est le premier*/
@@ -407,6 +411,7 @@ int log_freeForward( log_t* log )
         return (-1);
     }
     _log_freeEltsForward((log->selected)->next); /*On appelle la fonction qui supprime les maillons suivants l'elt selectionne car on passe next en parametre*/
+    (log->selected)->next = NULL; /*L'elt selectionne devient le dernier, son pointeur sur l'elt suivant est donc nul*/
     return (0);
 }
 
@@ -431,6 +436,7 @@ int log_freeBackward( log_t* log )
     }
     
     _log_freeEltsBackward((log->selected)->previous); /*On appelle la fonction qui supprime les maillons precedant l'elt selectionne car on passe previous en parametre*/
+    (log->selected)->previous = NULL;/*L'elt selectionne devient le premier, son pointeur sur l'elt precedant est donc nul*/
     return (0);
 }
 
@@ -455,4 +461,3 @@ int log_freeAll( log_t* log )
     _log_freeEltsForward(log->start); /*On supprime tout a partir du maillon start et lui meme*/
     return (0);
 }
-

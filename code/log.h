@@ -11,6 +11,8 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <assert.h>
+
 
 /** @defgroup log : Historique des coups joues
  * Permet de conserver en memoire chaque coup que le joueur aura effectue tout au long de la partie. Ainsi, il est possible de revenir en arriere ou de rejouer le coup suivant.
