@@ -8,6 +8,7 @@
  */
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <stdio.h>
 #include "log.h"
 
@@ -22,7 +23,7 @@
  * 
  */
 
-void test_log_create()
+/*void test_log_create()
  {
     if (log_create() == 0)
     {
@@ -35,7 +36,7 @@ void test_log_create()
     }
  }
  
- 
+ */
 
 
 
@@ -73,7 +74,7 @@ int main (int argc, char* argv[])
     int* dataInsert3= &k;
     
     /*Test des fonctions log_create et log_insertAfter*/
-    log_t *log = log_create();
+    log_t *log = log_create(sizeof (int));
     log_insertAfter( log , ((void*)dataInsert) );
     printf ("%d\n%d\n%d\n\n", *((int*)(log->start)->data), *((int*)(log->selected)->data), *((int*)(log->end)->data)); /*25 est à la fois start, selected et end car seul maillon de la chaine*/
 
@@ -86,6 +87,15 @@ int main (int argc, char* argv[])
     log_insertBefore( log , ((void*)dataInsert3) );
     log_previous( log );
     printf ("%d\n%d\n%d\n\n", (*((int*)(log->start)->data)), (*((int*)(log->selected)->data)), (*((int*)(log->end)->data))); /*26 reste le start, on insere 27 avant le selected 25 puis on deplace le curseur selected avant. On se trouve donc sur 27 qui devient le selected. Le end n'a pas bouge, c'est toujours 25*/
+    
+    /*Test de la fct de sauvegarde*/
+    log_save( log, "save1" );
+    
+    /*Test de la fct de chargement*/
+    log_t* logCreated = log_load( "save1", sizeof(int) );
+    printf("%d", *((int*)(logCreated->selected)->data) );
+    
+    printf("a");
     
     
     /*Test de la fonction log_next*/

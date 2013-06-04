@@ -43,6 +43,7 @@ typedef struct log_actions_t log_actions_t;
  * \brief Chaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne
  */
 typedef struct {
+    size_t size;
     log_actions_t* start;    /*!< Le premier maillon de la liste*/
     log_actions_t* end;      /*!< Le dernier maillon de la liste*/
     log_actions_t* selected; /*!< Le maillon selectionne*/
@@ -50,8 +51,12 @@ typedef struct {
 
 
 /* <instanciation */ 
-log_t*  log_create(); /*Cree une instance de liste chainee*/
+log_t*  log_create(size_t); /*Cree une instance de liste chainee*/
 int     log_destroy( log_t* ); /*Libere toute la liste chainee et l'instance de la liste*/
+
+/*Enregistrement et chargement de la chaine*/
+int     log_save( log_t*, char* ); /*Permet de sauvegarder la partie souhaitee*/
+log_t*  log_load( char*, size_t ); /*Permet de charger la partie souhaitee*/
 
 /* Deplacement du  curseur de selection */
 int     log_next( log_t* );
@@ -68,7 +73,7 @@ int     log_freeSelected( log_t* ); /*Pas utile maintenant*/
 int     log_freeForward( log_t* );
 int     log_freeBackward( log_t* ); /*Not now*/
 int     log_freeAll( log_t* );
-
+ 
 
 
 #endif

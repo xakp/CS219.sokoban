@@ -9,6 +9,8 @@
 
  
 #include <stdlib.h>
+#include <stdio.h>
+#include <stddef.h>
 #include "log.h"
 
 /**
@@ -57,14 +59,14 @@ static void _log_freeEltsBackward(log_actions_t* logDelete)
  * \retval Pointeur sur la liste nouvellement cree
  * 
  */
-log_t* log_create() 
+log_t* log_create(size_t s) 
 {
     log_t *logCreated = malloc (sizeof (log_t*) ); /*on alloue de la memoire de la taille d'un log_t*/
     assert(logCreated != NULL);/*On verifie si l'allocation a bien ete faite, on arrete le programme sinon*/
     logCreated->start = NULL;
     logCreated->end = NULL;
     logCreated->selected = NULL;
-    
+    logCreated->size = s;
     return (logCreated); /*On retourne l'element cree*/
 }
 
@@ -93,7 +95,84 @@ int log_destroy( log_t* log )
     return (0);
 }
 
+/* *************************************************** */
+/* ***********Enregistrement et chargement************ */ 
+/* *************************************************** */
 
+/**
+ * \ingroup log
+ * \fn log_t*  log_save( log_t*, char* )
+ * \brief Sauvegarde la liste
+ * \param La liste a sauver et le nom
+ * \retval Code d'erreur
+ * \attention Ecrase la sauvegarde precedente si le fichier existe deja
+ * 
+ */
+int  log_save( log_t* logToSave, char* logName )
+{
+    FILE* fd; /*On cree un pointeur sur fichier*/
+    log_actions_t* p; /*on cree un pointeur sur maillon*/
+    
+    fd = fopen(logName, "wb+"); /*On fait pointer sur le fichier ouvert*/
+    assert(fd != NULL); /*On verifie le pointeur ouvert*/
+    
+    for ( p = (logToSave->start); p != NULL; p = p->next ) /*On parcours la liste chainee de start a end(next est alors egal a 0)*/
+    {
+        fwrite(( p->data), logToSave->size, 1, fd); /*Ecrit les data des maillons dans le fichier*/
+    }
+    fclose (fd); /*Referme le fichier*/
+    return (0);
+
+
+}
+/**
+ * \ingroup log
+ * \fn log_t* log_load( char, size_t )
+ * \brief Charger la liste
+ * \param La liste a charger et la taille de la donnee a lire
+ * \retval Code d'erreur
+ * 
+ */
+log_t* log_load( char* logName, size_t s )
+{
+    int run=1;
+    FILE* fd;
+    log_t* logLoaded = log_create(s);
+    assert( logLoaded != NULL);
+    void* tmp = NULL;
+    
+    
+    fd = fopen(logName, "rb");
+    if (fd == NULL)
+    {
+        return (NULL);
+    }
+    
+    do
+    {
+        tmp = malloc( s );
+        assert(tmp != NULL);
+        
+        /*Si lecture reussie*/
+        if ( fread( tmp, s, 1, fd) == 1 ) 
+        {
+            log_insertAfter( logLoaded, tmp ); /*Insere un maillon avec la donne lue*/
+            log_next( logLoaded ); /*On deplace le curseur pour se trouver sur le dernier elt insere*/
+
+        }
+        
+        /*Si la lecture est finie ou que le fichier est vide*/
+        else
+        {
+            free(tmp);/*On libere le tmp*/
+            /*tmp = NULL; /*On place le tmp a null pour la condition de sortie*/
+            run=0;
+        }
+    } while (run);
+    
+   
+    return (logLoaded);
+}
 
 /* *************************************************** */
 /* ********************** Move *********************** */ 
@@ -121,14 +200,8 @@ int log_next( log_t* log )
     if ( (log->selected)->next != NULL) 
     {
         log->selected=(log->selected)->next; /*On decale le curseur sur l'elt suivant*/
-        return (0);
     } 
-    
-    /*Si l'elt selectionne est le dernier, on retourne une erreur*/
-    else 
-    {
-        return (-1);
-    }
+    return (0);
 }
 
 /**
@@ -263,6 +336,8 @@ int log_insertAfter( log_t* log, void* dataInsert)
        log->start = eltInsert ;
        log->selected = eltInsert ;
        log->end =  eltInsert;
+       eltInsert->next = NULL;
+       eltInsert->previous = NULL;
     }
     
     /*Si l'elt selectionne est le dernier*/
@@ -314,6 +389,8 @@ int log_insertBefore( log_t* log, void* dataInsert )
        log->start = eltInsert ;
        log->selected = eltInsert ;
        log->end =  eltInsert;
+       eltInsert->next = NULL;
+       eltInsert->previous = NULL;
     }
     
     /*Si l'elt selectionne est le premier*/
