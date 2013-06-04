@@ -41,8 +41,9 @@ int main( int argc, char **argv )
     int posx, posy;
     KEY_CODE key_k;
     lvl_t *lvl = NULL;
+    visu_t visu[3];
     
-    assert ( ihm_init(256, 256, 0) == 0 ) ;
+    assert( ihm_init(256, 256, 0) == 0 ) ;
     
     
     /* ouvre le fichier de level */
@@ -76,13 +77,24 @@ int main( int argc, char **argv )
 
     i = 0;
     j = 0;
+    visu[0].txt = "PERDU";
+    visu[0].color = al_map_rgb(255, 0, 0);
+    visu[0].size = BIG;
+    
+    visu[1].txt = "Gabrielle...";
+    visu[1].color = al_map_rgb(10, 155, 10);
+    visu[1].size = SMALL;
+    
+    visu[2].txt = "... je t'aime !!";
+    visu[2].color = al_map_rgb(0, 0, 255);
+    visu[2].size = SMALL;
+    
     
     run = 1;
     while ( !windowClosed() && run ) {
 
         if ( newkey(&key_k) ) {
-            if ( key_k == ALLEGRO_KEY_ESCAPE )
-                run = 0;
+            if ( key_k == ALLEGRO_KEY_ESCAPE ) run = 0;
             else if ( key_k == ALLEGRO_KEY_Z ) j--;
             else if ( key_k == ALLEGRO_KEY_Q ) i--;
             else if ( key_k == ALLEGRO_KEY_S ) j++;
@@ -93,8 +105,9 @@ int main( int argc, char **argv )
             printf("(%d,%d)\n", posx, posy);
         }
         
-        ihm_drawBackgournd();
-        ihm_drawSpriteInLab(i, j, ihm_PLAYER_LEFT);
+        ihm_drawBackground();
+        ihm_drawInterface(visu, 3);
+        ihm_drawSpriteInLab(i, j, ihm_BAG);
         al_flip_display(); 
         
         
@@ -112,5 +125,7 @@ int main( int argc, char **argv )
 
 
 
- 
 
+
+
+ 

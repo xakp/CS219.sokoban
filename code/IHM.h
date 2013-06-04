@@ -11,11 +11,14 @@
 #ifndef IHM_H
 #define IHM_H
 
-#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
 #include <assert.h>
 
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
 
 
 typedef int KEY_CODE;
@@ -46,6 +49,23 @@ typedef enum {
 #define NBR_SPRITES 12
 
 
+typedef enum {
+    BIG, SMALL
+} ihm_size;
+
+
+/**
+ * \struct visu_t
+ * \brief la visu a afficher
+ * 
+ */
+typedef struct {
+    ALLEGRO_COLOR color;
+    ihm_size size;
+    char* txt;
+} visu_t;
+
+
 
 /* initialise allegro ET le module clavier d'allegro, creer une pile en globale static ET lespiles d'events de display... */
 int     ihm_init(int w, int h, int flags);
@@ -55,7 +75,8 @@ void    ihm_close();
 int     ihm_loadSpriteSheet(char* path, int dimsprite);
 void    ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText);
 int     ihm_drawSpriteInLab(int posx, int posy, Sprites sp);
-void    ihm_drawBackgournd();
+void    ihm_drawBackground();
+void    ihm_drawInterface( visu_t*, const int n );
 
 
 /* Fonctions relatives aux evenements */

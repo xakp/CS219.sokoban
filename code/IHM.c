@@ -42,11 +42,57 @@
     ALLEGRO_EVENT_QUEUE *mouseQueue;    /*!< file pour les evenements sourie */
     ALLEGRO_EVENT_QUEUE *displayQueue;  /*!< file pour les evenements display */
     
-} ihm_context = {NULL, NULL, NULL, 0, 0, 0, 0, 5, -1, NULL, NULL, NULL, NULL}; 
+    ALLEGRO_FONT *fontB;
+    ALLEGRO_FONT *fontS;
+    
+} ihm_context = {NULL, NULL, NULL, 0, 0, 0, 0, 5, -1, NULL, NULL, NULL, NULL, NULL}; 
  
 
+/**
+ * \fn static int init_event()
+ * \brief initilise les events
+ * \retval 0 : ok
+ * 
+ */
+static int init_event() {
+    /* creer les 3 files d'evenement */
+    ihm_context.keyboardQueue = al_create_event_queue();
+    ihm_context.mouseQueue    = al_create_event_queue();
+    ihm_context.displayQueue  = al_create_event_queue();
+    
+    /* teste les creations */
+    if ( !(ihm_context.keyboardQueue && ihm_context.mouseQueue && ihm_context.displayQueue) ) {
+        fprintf(stderr, "error to create event queue\n");
+        al_destroy_display(ihm_context.display);
+        al_shutdown_image_addon();
+        return (-1);
+    }
+    
+    /* abonne les modules a leur file respective */
+    al_register_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
+    al_register_event_source(ihm_context.mouseQueue   , al_get_mouse_event_source());
+    al_register_event_source(ihm_context.displayQueue , al_get_display_event_source(ihm_context.display));
+
+    return (0);
+}
 
 
+/**
+ * \fn static int init_text(int sizeH, sizeL)
+ * \brief la taille
+ * \retval 0 : ok
+ * 
+ */
+static int init_text(int sizeH, int sizeL) { 
+    al_init_font_addon();
+    al_init_ttf_addon();
+    
+    ihm_context.fontB = al_load_ttf_font("../data/font.ttf", sizeH, 0);
+    ihm_context.fontS = al_load_ttf_font("../data/font.ttf", sizeL, 0);
+    
+    return ( ! ihm_context.fontB || ! ihm_context.fontS );
+}
+ 
 
 /**
  * \fn int ihm_init(int w, int h, int flags)
@@ -56,12 +102,16 @@
  */
 int ihm_init(int w, int h, int flags) {
 
-    /* init */
-    if ( !(al_init() && al_install_mouse() && al_install_keyboard() && al_init_image_addon() ) ) {
+    /* initialise allegro et installe correctement les addons */
+    if ( !(al_init() && al_install_mouse() && al_install_keyboard() ) ) {
         fprintf(stderr, "error init allegro or allegro's modules\n");
         return (-1);
     }
-
+    if ( !al_init_image_addon() ) {
+        fprintf(stderr, "error init image module\n");
+        return (-1);
+    }
+    
     /* creer le display */
     al_set_new_display_flags(flags);
     ihm_context.display = al_create_display(w, h);
@@ -72,22 +122,11 @@ int ihm_init(int w, int h, int flags) {
         return (-1);
     }
     
-    /* creer les 3 files d'evenement */
-    ihm_context.keyboardQueue = al_create_event_queue();
-    ihm_context.mouseQueue    = al_create_event_queue();
-    ihm_context.displayQueue  = al_create_event_queue();
-    
-    /* teste les creations */
-    if ( !(ihm_context.keyboardQueue && ihm_context.mouseQueue && ihm_context.displayQueue) ) {
-        fprintf(stderr, "error to create event queue\n");
-        al_destroy_display(ihm_context.display);
+    /* init font, events */
+    if ( init_event() || init_text(35, 20) ) {
+        ihm_close();
         return (-1);
     }
-    
-    /* abonne les modules a leur file respective */
-    al_register_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
-    al_register_event_source(ihm_context.mouseQueue   , al_get_mouse_event_source());
-    al_register_event_source(ihm_context.displayQueue , al_get_display_event_source(ihm_context.display));
     
     return (0);
 }
@@ -102,6 +141,8 @@ int ihm_init(int w, int h, int flags) {
  * \attention ne libere pas le lvl_t
  */
 void ihm_close() {
+    int i;
+
     al_unregister_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
     al_unregister_event_source(ihm_context.mouseQueue, al_get_mouse_event_source());
     al_unregister_event_source(ihm_context.displayQueue, al_get_display_event_source(ihm_context.display));
@@ -112,22 +153,21 @@ void ihm_close() {
 
     al_destroy_display(ihm_context.display);
     
-    /* desrtroy sprites */
-}
-
-
-
-/**
- * \fn void ihm_drawBackgournd();
- * \brief 
- * \retval
- * 
- */
-void ihm_drawBackgournd() {
-
-    al_set_target_backbuffer(ihm_context.display);
-    al_draw_bitmap(ihm_context.background, 0, 0, 0);
+    if ( ihm_context.sprites != NULL ) {
+        for (i=0 ; i<NBR_SPRITES ; i++) {
+            al_destroy_bitmap( ihm_context.sprites[i] );
+        }
+    }
+    if ( ihm_context.spritesheet != NULL ) 
+        al_destroy_bitmap( ihm_context.spritesheet );
+    if ( ihm_context.background != NULL ) 
+        al_destroy_bitmap( ihm_context.background );
     
+    
+    
+    al_shutdown_image_addon();
+    al_shutdown_font_addon();
+    al_shutdown_ttf_addon();
 }
 
 
@@ -151,7 +191,7 @@ int ihm_loadSpriteSheet(char* path, int dimSprite) {
         ihm_context.dimSprite = dimSprite;
         
         ihm_context.sprites = (ALLEGRO_BITMAP**) malloc( NBR_SPRITES * sizeof (ALLEGRO_BITMAP*) );
-        assert(  ihm_context.sprites );
+        assert( ihm_context.sprites );
         
         for (i=0 ; i<NBR_SPRITES ; i++) {
             ihm_context.sprites[i] = 
@@ -179,6 +219,7 @@ int ihm_loadSpriteSheet(char* path, int dimSprite) {
  */
 void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     int i, j, w, h, L;
+    char buff[32];
     
     ihm_context.lvl = lvl;
     ihm_context.margex = margex;
@@ -250,7 +291,29 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
             }/* ! else */
         }/* ! for j */
     }/* ! for i */
+    
+    /* Change le titre */
+    sprintf(buff, "Sokoban - Niveau %d", lvl->num);
+    al_set_window_title(ihm_context.display, buff);
+
 }
+
+
+
+
+/**
+ * \fn void ihm_drawBackground();
+ * \brief 
+ * \retval
+ * 
+ */
+void ihm_drawBackground() {
+
+    al_set_target_backbuffer(ihm_context.display);
+    al_draw_bitmap(ihm_context.background, 0, 0, 0);
+    
+}
+
 
 
 
@@ -293,6 +356,41 @@ int newkey( KEY_CODE* key ) {
 }
 
 
+
+
+/**
+ * \fn void ihm_drawInterface();
+ * \brief 
+ * \retval
+ * 
+ */
+void ihm_drawInterface(visu_t* vtab, const int n) {
+    int x, y, i;
+    visu_t* v = vtab;
+    
+    al_set_target_backbuffer(ihm_context.display);
+    
+    x = (ihm_context.wlvl + 2*ihm_context.margex + ihm_context.dimText/2) * ihm_context.dimSprite;
+    y = ihm_context.margey * ihm_context.dimSprite;
+    
+    for (i=0 ; i<n ; i++) {
+        
+        al_draw_text(  (v[i].size == BIG) ? ihm_context.fontB : ihm_context.fontS, v[i].color,      /* font et color */
+                        x, y, ALLEGRO_ALIGN_CENTRE, v[i].txt); 
+        
+        y += al_get_font_line_height((v[i].size == BIG) ? ihm_context.fontB : ihm_context.fontS);
+    }
+}
+
+
+/*
+ al_draw_textf(ihm_context.font, color, x, y, flags, "");
+int life;
+int time;
+int score;
+int move;
+int push;
+*/
 
 /**
  * \fn int windowClosed()
