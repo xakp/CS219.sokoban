@@ -39,7 +39,8 @@ typedef enum {
     lvl_TARGET,
     lvl_BAG,
     lvl_WALL,
-    lvl_GROUND
+    lvl_GROUND,    
+    lvl_BAG_OK
 } lvl_cell;
 
 

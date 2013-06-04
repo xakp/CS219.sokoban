@@ -107,7 +107,7 @@ int main( int argc, char **argv )
         
         ihm_drawBackground();
         ihm_drawInterface(visu, 3);
-        ihm_drawSpriteInLab(i, j, ihm_BAG);
+        ihm_drawSpriteInLab(i, j, ihm_BAG_OK);
         al_flip_display(); 
         
         

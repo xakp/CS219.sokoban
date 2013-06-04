@@ -41,12 +41,13 @@ typedef enum {
     ihm_PLAYER_LEFT_PUSH = 5,  /*!<  */
     ihm_PLAYER_UP_PUSH = 6,     /*!<  */
     ihm_PLAYER_DOWN_PUSH = 7,   /*!<  */
-    ihm_TARGET = 8,             /*!<  */
-    ihm_BAG = 9,                /*!<  */
+    ihm_BAG = 8,             /*!<  */
+    ihm_TARGET = 9,                /*!<  */
     ihm_WALL = 10,              /*!<  */
-    ihm_GROUND = 11             /*!<  */
+    ihm_GROUND = 11,             /*!<  */
+    ihm_BAG_OK = 12             /*!<  */
 } Sprites;
-#define NBR_SPRITES 12
+#define NBR_SPRITES 13
 
 
 typedef enum {
@@ -77,6 +78,7 @@ void    ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText);
 int     ihm_drawSpriteInLab(int posx, int posy, Sprites sp);
 void    ihm_drawBackground();
 void    ihm_drawInterface( visu_t*, const int n );
+void    ihm_drawMovable();
 
 
 /* Fonctions relatives aux evenements */
