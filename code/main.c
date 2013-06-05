@@ -30,6 +30,7 @@
 #include "engine.h"
 
 
+
 /**
  * \fn int main()
  * \brief Point d'entree du programme
@@ -39,16 +40,27 @@
 int main( int argc, char **argv )
 {
     KEY_CODE key_k;
+    movePlayed_t* _start =  NULL;
     lvl_t* lvl;
     visu_t visu[3];
     int run;
     char c;
-    int num = 1;
+    int num = 6;
     int i, j;
     
-    assert( ihm_init(256, 256, 0) == 0 ) ;
+    /* creer la liste des coups */
+    log_t* log = log_create( sizeof (movePlayed_t) );
     
-    printf("%d\n", sizeof (lvl_cell) );
+    /* initialise le maillon start    */
+    assert( _start = malloc( sizeof ( movePlayed_t ) ) );
+    *_start = START;
+    log_insertAfter(log, _start);
+    
+    
+    
+    
+    assert( ihm_init(256, 256, 0) == 0 ) ;
+
     
     /* ouvre le fichier de level */
     if (lvl_openFileLvl("../data/levels.lvl") != 0) 
@@ -56,7 +68,6 @@ int main( int argc, char **argv )
         puts("erreur\n");
         return (-1);
     }
-    
     
     lvl = lvl_readLevel( num );
     if (lvl == NULL) {
@@ -75,21 +86,31 @@ int main( int argc, char **argv )
     while ( !windowClosed() && run ) {
     
         if ( newkey(&key_k) ) {
-            printf("KEY : %s\n",  al_keycode_to_name(key_k) );
             
             switch ( key_k ) {
             
             /*Autres evenements*/  
             /*Charger un niveau (ecrase la partie sauvegardee sur ce niveau si elle existe*/
         
-        /*annuler/retablire*/  
+        /*annuler/retablir*/
+            /*retablir*/ 
             case ALLEGRO_KEY_P :
-                
+                if ( (log->selected) != NULL ) {
+                    if ( ((log->selected)->next) != NULL ) {
+                        log_next( log );
+                        replayMove(lvl, (log->selected)->data );
+                        printf("move restored\n");
+                    }
+                }
                 break;
         
             /*annuler*/  
             case ALLEGRO_KEY_O :
-                
+                if ( *(movePlayed_t*)((log->selected)->data) != START ) {
+                    revertMove(lvl, (log->selected)->data );
+                    log_previous( log );
+                    printf("move canceled\n");
+                }
                 break;
 
                 
@@ -162,7 +183,7 @@ int main( int argc, char **argv )
  
  
 /* l'affiche dans le terminal */
-for (i=0; lvl->dat[i] != NULL ; i++ ) {
+if(0)for (i=0; lvl->dat[i] != NULL ; i++ ) {
     for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) {
         if      (lvl->dat[i][j] & lvl_PLAYER) c = '@';
         else if ((lvl->dat[i][j] & lvl_TARGET) && (lvl->dat[i][j] & lvl_BAG)) c = '*';

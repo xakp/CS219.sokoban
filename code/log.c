@@ -477,14 +477,16 @@ void log_freeSelected( log_t* log )
 void log_freeForward( log_t* log ) 
 {
     assert(log != NULL);
-
-    if ( (log->selected)->next != NULL) {
-        /*On appelle la fonction qui supprime les maillons suivants l'elt selectionne car on passe next en parametre*/
-        _log_freeEltsForward((log->selected)->next);
-        
-        /*L'elt selectionne devient le dernier, son pointeur sur l'elt suivant est donc nul*/
-        (log->selected)->next = NULL; 
-        log->end = log->selected;
+    
+    if ( (log->selected) != NULL ) {
+        if ( (log->selected)->next != NULL) {
+            /*On appelle la fonction qui supprime les maillons suivants l'elt selectionne car on passe next en parametre*/
+            _log_freeEltsForward((log->selected)->next);
+            
+            /*L'elt selectionne devient le dernier, son pointeur sur l'elt suivant est donc nul*/
+            (log->selected)->next = NULL; 
+            log->end = log->selected;
+        }
     }
 }
 
@@ -506,12 +508,14 @@ void log_freeBackward( log_t* log )
     assert(log != NULL);
     
     /*On appelle la fonction qui supprime les maillons precedant l'elt selectionne car on passe previous en parametre*/
-    if ((log->selected)->previous != NULL) {
-        _log_freeEltsBackward((log->selected)->previous); 
-        
-        /*L'elt selectionne devient le premier, son pointeur sur l'elt precedant est donc nul*/
-        (log->selected)->previous = NULL;
-        log->start = log->selected;
+    if ( (log->selected) != NULL ) {
+        if ((log->selected)->previous != NULL) {
+            _log_freeEltsBackward((log->selected)->previous); 
+            
+            /*L'elt selectionne devient le premier, son pointeur sur l'elt precedant est donc nul*/
+            (log->selected)->previous = NULL;
+            log->start = log->selected;
+        }
     }
 }
 

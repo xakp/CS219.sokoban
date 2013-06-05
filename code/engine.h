@@ -21,23 +21,25 @@ typedef enum {
     LEFT = 0,
     DOWN = 1,
     RIGHT = 2,
-    UP = 3
+    UP = 3,
+    START = 4,
+    END = 5
 } Move;
 
 
-typedef uint8_t movePlayed;
+typedef unsigned int movePlayed_t;
 
 /* joue le coup et renvoi la donnee a allouee */
-movePlayed* playMove( lvl_t* , Move );
+movePlayed_t* playMove( lvl_t* , Move );
 
 /* test la validite du coup */
 int testMove( lvl_t*, Move );
 
 /* annule le coup passe en param */
-void revertMove( lvl_t*, movePlayed*  );
+void revertMove( lvl_t*, movePlayed_t*  );
 
 /* retablie un move */
-void replayMove( lvl_t*, movePlayed*  );
+void replayMove( lvl_t*, movePlayed_t*  );
 
 
 

@@ -79,6 +79,8 @@ int testLog ()
     if (log != NULL) printf("log created\n");
     else return -1;
     
+    log_freeForward(log);
+    
     /*25 est à la fois start, selected et end car seul maillon de la chaine*/
     log_insertAfter( log, ((void*)d1) ); log_next(log);
     log_insertAfter( log, ((void*)d2) ); log_next(log);
