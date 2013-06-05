@@ -26,6 +26,7 @@
 
 #include "level.h"
 #include "IHM.h"
+#include "log.h"
 
 
 /**
@@ -112,7 +113,9 @@ int main( int argc, char **argv )
         
         
     }
-
+    
+    
+    ihm_close();
 
     /* libere le level */
     lvl_closeLevel(lvl);

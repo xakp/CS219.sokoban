@@ -15,7 +15,7 @@
 
 int coupPossible( lvl_t*, COUP )
 coupToLog playCoup( lvl_t*, COUP )
-int logPossible( lvl_t*, COUP )
+int logCoup( lvl_t*, COUP )
 void revertCoup(....);
 
 

@@ -110,7 +110,7 @@ void log_save( log_t* logToSave, char* logName )
  * \fn log_t* log_load( char, size_t )
  * \brief Charger la liste
  * \param La liste a charger et la taille de la donnee a lire
- * \retval Code d'erreur
+ * place le curseur a la fin
  * 
  */
 log_t* log_load( char* logName, size_t s )
@@ -154,6 +154,7 @@ log_t* log_load( char* logName, size_t s )
         }
     } while (run);
     
+    log_end(logLoaded);
    
     return (logLoaded);
 }
