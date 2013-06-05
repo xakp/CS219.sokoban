@@ -309,7 +309,9 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
 
 }
 
-
+/* *************************************************** */
+/* ******************* dessin ************************ */ 
+/* *************************************************** */
 
 
 /**
@@ -329,24 +331,31 @@ void ihm_drawBackground() {
 
 /**
  * \fn void ihm_drawMovable();
- * \brief 
- * \retval
+ * \brief dessine les sacs et le player
+ * \retval le nombre de sac bien plasse
+ * c'est cette fonction qui renvoi le nombre de sac bien place parce que c'est la 
+ * derniere a parcourir le lvl apres que le coup soit joue.
+ * on optimise donc le temps de calcul
  * 
  */
-void ihm_drawMovable() {
+int ihm_drawMovable() {
     int l, c;
-    
+    int bagOK = 0;
 
     for (l=0; ihm_context.lvl->dat[l] != NULL ; l++ ) {
         for (c=0; ihm_context.lvl->dat[l][c] != lvl_NULL ; c++ ) {
         
             if ( ((ihm_context.lvl->dat[l][c]) & lvl_movable) != 0) {
-                
                 ihm_drawSpriteInLab(c+ihm_context.margex, l+ihm_context.margey, ihm_context.lvl->dat[l][c]);
+                
+                if ( ihm_context.lvl->dat[l][c] == lvl_bagOK ) {
+                    bagOK++;
+                }
 
             }
         }
     }
+    return bagOK;
 }
 
 
@@ -358,7 +367,7 @@ void ihm_drawMovable() {
  * \retval
  * 
  */
-int ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
+void ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
     
     al_set_target_backbuffer(ihm_context.display);
     
@@ -367,32 +376,8 @@ int ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
     else 
         al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (posx) * ihm_context.dimSprite,  (posy) * ihm_context.dimSprite, 0);
 
-    return 0;
 }
 
-
-
-/**
- * \fn int newkey( KEY_CODE* )
- * \brief 
- * \retval
- * 
- */
-int newkey( KEY_CODE* key ) {
-    ALLEGRO_EVENT event;
-    if ( al_is_event_queue_empty(ihm_context.keyboardQueue) ) {
-        return (0);
-    }
-    else {
-        al_get_next_event(ihm_context.keyboardQueue, &event);
-        
-        if ( event.type == ALLEGRO_EVENT_KEY_CHAR ) {
-            *key = event.keyboard.keycode;
-            return (1);
-        }
-    }
-    return (0);
-}
 
 
 
@@ -422,14 +407,36 @@ void ihm_drawInterface(visu_t* vtab, const int n) {
 }
 
 
-/*
- al_draw_textf(ihm_context.font, color, x, y, flags, "");
-int life;
-int time;
-int score;
-int move;
-int push;
-*/
+
+/* *************************************************** */
+/* ******************* evenements ******************** */ 
+/* *************************************************** */
+
+
+/**
+ * \fn int newkey( KEY_CODE* )
+ * \brief 
+ * \retval
+ * 
+ */
+int newkey( KEY_CODE* key ) {
+    ALLEGRO_EVENT event;
+    if ( al_is_event_queue_empty(ihm_context.keyboardQueue) ) {
+        return (0);
+    }
+    else {
+        al_get_next_event(ihm_context.keyboardQueue, &event);
+        
+        if ( event.type == ALLEGRO_EVENT_KEY_CHAR ) {
+            *key = event.keyboard.keycode;
+            return (1);
+        }
+    }
+    return (0);
+}
+
+
+
 
 /**
  * \fn int windowClosed()

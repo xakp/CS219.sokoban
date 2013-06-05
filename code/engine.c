@@ -199,7 +199,9 @@ void replayMove( lvl_t* lvl, movePlayed_t* mp ) {
     lvl(px, py) &= ~lvl_PLAYER;
 }
 
-
+/* *************************************************** */
+/* ******************* statics func ****************** */ 
+/* *************************************************** */
 
 static void convertMove(Move mo, int *ox, int *oy) {
     
@@ -246,5 +248,8 @@ static void foundPlayer(lvl_t* lvl) {
     }
 }
 
+
+
 #undef px
 #undef py
+

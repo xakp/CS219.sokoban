@@ -30,6 +30,16 @@
 #include "engine.h"
 
 
+enum {
+    restart
+    nextLVL
+    ....
+} tralala;
+
+tralala playGame( log, lvl ) 
+
+
+
 
 /**
  * \fn int main()
@@ -39,17 +49,22 @@
  */
 int main( int argc, char **argv )
 {
-    KEY_CODE key_k;
     movePlayed_t* _start =  NULL;
+    log_t* log = NULL;
+    
     lvl_t* lvl;
-    visu_t visu[3];
+
     int run;
+    int bagOK = 0;
     char c;
-    int num = 6;
+    int num = 2;
     int i, j;
     
+    visu_t visu[3];
+    KEY_CODE key_k;
+    
     /* creer la liste des coups */
-    log_t* log = log_create( sizeof (movePlayed_t) );
+    log = log_create( sizeof (movePlayed_t) );
     
     /* initialise le maillon start    */
     assert( _start = malloc( sizeof ( movePlayed_t ) ) );
@@ -201,7 +216,7 @@ if(0)for (i=0; lvl->dat[i] != NULL ; i++ ) {
         
         /* on affiche */
         ihm_drawBackground();
-        ihm_drawMovable();
+        bagOK = ihm_drawMovable();
         ihm_drawInterface(visu, 0);
         
         al_flip_display();

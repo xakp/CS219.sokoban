@@ -49,6 +49,7 @@ typedef enum {
 
 #define lvl_access (~(lvl_TARGET|lvl_GROUND))
 #define lvl_movable (lvl_PLAYER|lvl_BAG)
+#define lvl_bagOK (lvl_TARGET|lvl_BAG)
 
 /**
  * \struct Level
