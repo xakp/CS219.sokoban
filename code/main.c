@@ -9,7 +9,7 @@
  * \brief Mini-projet CS210
  * \author SCHLOTTERBECK Guillaume - EYMARD Gabrielle
  * \version 1.0
- * \date 16/05/2013
+ * \date 05/06/2013
  *
  */
 
@@ -37,91 +37,110 @@
  */
 int main( int argc, char **argv )
 {
-    int i, j;
-    int run;
-    int posx, posy;
     KEY_CODE key_k;
-    lvl_t *lvl = NULL;
-    visu_t visu[3];
-    
+    int i, j;
+    lvl_t* lvl;
+    visu_t* visu[3];
     assert( ihm_init(256, 256, 0) == 0 ) ;
+    int run;
     
     
     /* ouvre le fichier de level */
-    if (lvl_openFileLvl("../data/levels.lvl") != 0) {
+    if (lvl_openFileLvl("../data/levels.lvl") != 0) 
+    {
         puts("erreur\n");
         return (-1);
     }
     
-    /* lit un level et test l'ouveture */
-    lvl = lvl_readLevel(54);
-    if (lvl == NULL) {
-        puts("lecture impossible\n");
-        return (-1);
-    }
-    
-    
-    /* l'affiche dans le terminal */
-    for (i=0; lvl->dat[i] != NULL ; i++ ) {
-        for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) 
-            putc( " @.$# "[ lvl->dat[i][j] ], stdout );
-        printf("\n");
-    }
-    
-    
-    if ( ihm_loadSpriteSheet("../data/spritesheet.png", 32) != 0 ) {
-        puts("erreur chargement spritesheet\n");
-        return (-1);
-    }
-    
-    ihm_loadLab(lvl, 1, 1, 5);
-
-    i = 0;
-    j = 0;
-    visu[0].txt = "PERDU";
-    visu[0].color = al_map_rgb(255, 0, 0);
-    visu[0].size = BIG;
-    
-    visu[1].txt = "Gabrielle...";
-    visu[1].color = al_map_rgb(10, 155, 10);
-    visu[1].size = SMALL;
-    
-    visu[2].txt = "... je t'aime !!";
-    visu[2].color = al_map_rgb(0, 0, 255);
-    visu[2].size = SMALL;
-    
     
     run = 1;
-    while ( !windowClosed() && run ) {
-
-        if ( newkey(&key_k) ) {
-            if ( key_k == ALLEGRO_KEY_ESCAPE ) run = 0;
-            else if ( key_k == ALLEGRO_KEY_Z ) j--;
-            else if ( key_k == ALLEGRO_KEY_Q ) i--;
-            else if ( key_k == ALLEGRO_KEY_S ) j++;
-            else if ( key_k == ALLEGRO_KEY_D ) i++;
+    while ( !windowClosed() && run ) {   
+    switch (key_k) {
+    
+    /*Autres evenements*/  
+    /*Charger un niveau (ecrase la partie sauvegardee sur ce niveau si elle existe*/
+    case ALLEGRO_KEY_ENTER :
+        lvl = lvl_readLevel( num );
+        if (lvl == NULL) {
+            puts("lecture impossible\n");
+            return (-1);
         }
         
-        if ( mouseClicked(&posx, &posy) ) {
-            printf("(%d,%d)\n", posx, posy);
-        }
-        
+        ihm_loadLab( lvl, 1, 1, 7 );
         ihm_drawBackground();
-        ihm_drawInterface(visu, 3);
-        ihm_drawSpriteInLab(i, j, ihm_BAG_OK);
-        al_flip_display(); 
+        ihm_drawInterface
+        break;
         
+    /*On quitte le programme*/  
+    case ALLEGRO_KEY_ESCAPE :
+        lvl_closeLevel(lvl);
+        lvl_closeFileLvl();
+        break;
         
-    }
+    /*Recommencer niveau*/
+    case ALLEGRO_KEY_R :
+        lvl_closeLevel( lvl );
+        lvl_readLevel( num );
+        break;
+        
+    /*Charger partie deja exisante*/
+    case ALLEGRO_KEY_L :
+        lvl_readLevel( num );
+        log_load( nameLog, sizeLog );
+        break;
+        
+    /*Sauvegarder partie en cours*/
+    case ALLEGRO_KEY_C :
+        log_save( log, logSaved );
+        break;
     
-    
-    ihm_close();
 
-    /* libere le level */
-    lvl_closeLevel(lvl);
+        
+    /*Deplacements*/
+    /*on deplace vers le haut*/
+    case ALLEGRO_KEY_Z :
+        if ( testMove(lvl, UP) != 0 ) 
+        {
+            log_insertAfter(log, playMove(lvl,UP));
+            log_next(log);
+        }
+        break ;
+        
+    /*on deplace vers le bas*/
+    case ALLEGRO_KEY_S :
+            if ( testMove(lvl, DOWN) != 0 ) 
+        {
+            log_insertAfter(log, playMove(lvl,DOWN));
+            log_next(log);
+        }
     
-    /* non implemente */
-    lvl_closeFileLvl();
+        break ;
+        
+    /*on deplace vers le gauche*/
+    case ALLEGRO_KEY_Q :
+            if ( testMove(lvl, LEFT) != 0 ) 
+        {
+            log_insertAfter(log, playMove(lvl,LEFT));
+            log_next(log);
+        }
+    
+        break ;
+        
+    /*on deplace vers le droite*/
+    case ALLEGRO_KEY_D :
+            if ( testMove(lvl, RIGHT) != 0 ) 
+        {
+            log_insertAfter(log, playMove(lvl,RIGHT));
+            log_next(log);
+        }
+        
+        break;
+        
+    /*Ne rien faire*/
+    default :
+        
+        break;
+    }
     
     return (0);
 }
