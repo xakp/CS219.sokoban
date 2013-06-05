@@ -4,7 +4,7 @@ CC=gcc
 LD=gcc 
 MAKE=make
 
-OBJ=main.o level.o IHM.o log.o
+OBJ=level.o IHM.o log.o engine.o
 
 CFLAGS=-c -Wall -pedantic -Wno-long-long 
 
@@ -25,12 +25,12 @@ else
 endif
 
 
-all: $(OBJ)
+all: $(OBJ) main.o 
 	$(LD) $^ $(LFLAGS) -o $(EXEC)
 %o: %c
 	$(CC) $^ $(CFLAGS) -o $@
 
-tu: testsUnitaires.o log.o
+tu: $(OBJ) testsUnitaires.o
 	$(LD) $^ $(LFLAGS) -o $(EXEC_TU)
 
 

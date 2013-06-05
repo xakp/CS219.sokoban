@@ -316,6 +316,33 @@ void ihm_drawBackground() {
 
 
 
+/**
+ * \fn void ihm_drawMovable();
+ * \brief 
+ * \retval
+ * 
+ */
+void ihm_drawMovable() {
+    int i, j;
+    
+    al_set_target_backbuffer(ihm_context.display);
+    
+
+    /* l'affiche dans le terminal */
+    for (i=0; ihm_context.lvl->dat[i] != NULL ; i++ ) {
+        for (j=0; ihm_context.lvl->dat[i][j] != lvl_NULL ; j++ ) {
+        
+            if ( (ihm_context.lvl->dat[i][j] & lvl_movable) == 0) {
+                
+                ihm_drawSpriteInLab(j+ihm_context.margey, i+ihm_context.margex, ihm_context.lvl->dat[i][j]);
+
+            }
+        }
+    }
+}
+
+
+
 
 /**
  * \fn int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp)
@@ -323,10 +350,22 @@ void ihm_drawBackground() {
  * \retval
  * 
  */
-int ihm_drawSpriteInLab(int posx, int posy, Sprites sp) {
+int ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
     
     al_set_target_backbuffer(ihm_context.display);
-    al_draw_bitmap( ihm_context.sprites[ sp ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    
+    if (cell & lvl_TARGET)    
+        al_draw_bitmap( ihm_context.sprites[ ihm_TARGET ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    else 
+        al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    
+    cell &= ~lvl_movable;
+    
+    if (cell & lvl_PLAYER)    
+        al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    else 
+        al_draw_bitmap( ihm_context.sprites[ ihm_BAG ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    
     
     return 0;
 }

@@ -11,12 +11,57 @@
 #include <stddef.h>
 #include <stdio.h>
 #include "log.h"
+#include "engine.h"
 
-
+void _lvl_view(lvl_t*);
 void _log_view(log_t*);
+int testLog () ;
+int testEngine () ;
 
 
-int main (int argc, char* argv[]) 
+int main() {
+
+    return testEngine() ;
+}
+
+
+
+int testEngine () {
+    lvl_t* lvl = NULL;
+    
+    
+    /* ouvre le fichier de level */
+    if (lvl_openFileLvl("../data/levels.lvl") != 0) {
+        puts("erreur\n");
+        return (-1);
+    }
+    
+    /* lit un level et test l'ouveture */
+    lvl = lvl_readLevel(54);
+    if (lvl == NULL) {
+        puts("lecture impossible\n");
+        return (-1);
+    }
+    
+    
+    _lvl_view(lvl);
+    
+    testMove(lvl, UP);
+    
+    _lvl_view(lvl);
+    
+    
+    /* libere le level */
+    lvl_closeLevel(lvl);
+    
+    /* non implemente */
+    lvl_closeFileLvl();
+    
+    return 0;
+}
+
+
+int testLog () 
 {
     log_t *log = NULL;
     int* d1 = (int*) malloc( sizeof (int) );
@@ -105,7 +150,17 @@ void _log_view(log_t* log) {
 
 
 
+void _lvl_view(lvl_t* lvl) {
+    
+    int i, j;
 
-
+    /* l'affiche dans le terminal */
+    for (i=0; lvl->dat[i] != NULL ; i++ ) {
+        for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) 
+            putc( " .@CS$# "[ lvl->dat[i][j] ], stdout );
+        printf("\n");
+    }
+    printf("\n");
+}
 
 

@@ -75,7 +75,7 @@ void    ihm_close();
 /* Fonctions relatives a l'affichage. */
 int     ihm_loadSpriteSheet(char* path, int dimsprite);
 void    ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText);
-int     ihm_drawSpriteInLab(int posx, int posy, Sprites sp);
+int     ihm_drawSpriteInLab(int posx, int posy, lvl_cell);
 void    ihm_drawBackground();
 void    ihm_drawInterface( visu_t*, const int n );
 void    ihm_drawMovable();

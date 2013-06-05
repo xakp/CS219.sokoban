@@ -34,13 +34,17 @@
  * 
  */
 typedef enum {
-    lvl_NULL = 0,     /*!< Sentinelle. */
-    lvl_PLAYER,
-    lvl_TARGET,
-    lvl_BAG,
-    lvl_WALL,
-    lvl_GROUND,    
-    lvl_BAG_OK
+    lvl_NULL    = 0,   /*!< Sentinelle. */
+/*    entity :                 WPBGT   */
+    lvl_WALL    = 0x10, /*0b00010000,*/
+    lvl_PLAYER  = 0x08, /*0b00001000,*/
+    lvl_BAG     = 0x04, /*0b00000100,*/
+    lvl_GROUND  = 0x02, /*0b00000010,*/
+    lvl_TARGET  = 0x01, /*0b00000001,*/
+/*    caracteristiques : caracteristiques & lvl_entity */
+    lvl_access  = 0xFC, /*0b11111100*/
+    lvl_movable = 0xFC /*0b11111001*/
+    
 } lvl_cell;
 
 
