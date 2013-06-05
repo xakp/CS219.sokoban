@@ -163,11 +163,13 @@ void ihm_close() {
     if ( ihm_context.background != NULL ) 
         al_destroy_bitmap( ihm_context.background );
     
+    al_destroy_font(ihm_context.fontB);
+    al_destroy_font(ihm_context.fontS);
     
     
-    al_shutdown_image_addon();
-    al_shutdown_font_addon();
     al_shutdown_ttf_addon();
+    al_shutdown_font_addon();
+    al_shutdown_image_addon();
 }
 
 
@@ -218,8 +220,10 @@ int ihm_loadSpriteSheet(char* path, int dimSprite) {
  * 
  */
 void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
-    int i, j, w, h, L;
+    int l, c, w, h, L;
     char buff[32];
+    lvl_cell cell;
+    int meet_sentinel = 0;
     
     ihm_context.lvl = lvl;
     ihm_context.margex = margex;
@@ -233,11 +237,11 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     L = ihm_context.dimSprite;
     
     /* l'affiche dans le terminal */
-    for (i=0; lvl->dat[i] != NULL ; i++ ) {
-        for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ );
-        ihm_context.wlvl = (j > ihm_context.wlvl) ? j : ihm_context.wlvl;
+    for (l=0; lvl->dat[l] != NULL ; l++ ) {
+        for (c=0; lvl->dat[l][c] != lvl_NULL ; c++ ) ;
+        ihm_context.wlvl = (c > ihm_context.wlvl) ? c : ihm_context.wlvl;
     }
-    ihm_context.hlvl = i;
+    ihm_context.hlvl = l;
     
     /* en nombre de sprite */
     w = ihm_context.wlvl + 2*(ihm_context.margex) + ihm_context.dimText;
@@ -261,36 +265,43 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     al_clear_to_color( al_map_rgb(0, 0, 0) );
 
     
-    for (i=0; i<w ; i++ ) {
-        for (j=0; j<h ; j++ ) {
+    for (l=0; l<h ; l++ ) {
+        for (c=0; c<w ; c++ ) {
             /* si on est dans le cadre */
-            if ( i<ihm_context.margex || i >= (ihm_context.margex + ihm_context.wlvl) 
-                || j<ihm_context.margey || j >= (ihm_context.margey + ihm_context.hlvl) ) {
+            if ( (c<ihm_context.margex) || (c >= (ihm_context.margex + ihm_context.wlvl)) 
+                || (l<ihm_context.margey) || (l >= (ihm_context.margey + ihm_context.hlvl)) ) {
                 
                 /* draw ground */
-                al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], i * L, j * L , 0);
+                al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
             }
             
             /* si on est dans le labyrinthe */
             else {
-                switch (ihm_context.lvl->dat[j-ihm_context.margey][i-ihm_context.margex]) {
-                case lvl_WALL:
-                    /* draw wall */
-                    al_draw_bitmap( ihm_context.sprites[ ihm_WALL ], i * L, j * L , 0);
-                    break ;
-                case lvl_TARGET:
-                    /* draw target on ground */
-                    al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], i * L, j * L , 0);                
-                    al_draw_bitmap( ihm_context.sprites[ ihm_TARGET ], i * L, j * L , 0);
-                    break ;
-                default : 
+                cell = (ihm_context.lvl->dat[l-ihm_context.margey][c-ihm_context.margex]);
+                
+                /* si on rencontre la senti, on affiche des grounds jusqu'a la marge */
+                if ( cell == lvl_NULL ) {
+                    meet_sentinel = 1;
+                }
+                
+                if ( meet_sentinel != 0 ) {
+                    al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
+                }
+                else if (cell & lvl_WALL) {
+                    al_draw_bitmap( ihm_context.sprites[ ihm_WALL ],   c * L, l * L , 0);
+                }
+                else if (cell & lvl_TARGET) {
+                    al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);               
+                    al_draw_bitmap( ihm_context.sprites[ ihm_TARGET ], c * L, l * L , 0);
+                }
+                else { 
                     /* draw ground */
-                    al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], i * L, j * L , 0);
-                    
-                }/* ! switch */
+                    al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
+                }
             }/* ! else */
-        }/* ! for j */
-    }/* ! for i */
+        }/* ! for c */
+        meet_sentinel = 0;
+    }/* ! for l */
     
     /* Change le titre */
     sprintf(buff, "Sokoban - Niveau %d", lvl->num);
@@ -323,18 +334,15 @@ void ihm_drawBackground() {
  * 
  */
 void ihm_drawMovable() {
-    int i, j;
-    
-    al_set_target_backbuffer(ihm_context.display);
+    int l, c;
     
 
-    /* l'affiche dans le terminal */
-    for (i=0; ihm_context.lvl->dat[i] != NULL ; i++ ) {
-        for (j=0; ihm_context.lvl->dat[i][j] != lvl_NULL ; j++ ) {
+    for (l=0; ihm_context.lvl->dat[l] != NULL ; l++ ) {
+        for (c=0; ihm_context.lvl->dat[l][c] != lvl_NULL ; c++ ) {
         
-            if ( (ihm_context.lvl->dat[i][j] & lvl_movable) == 0) {
+            if ( ((ihm_context.lvl->dat[l][c]) & lvl_movable) != 0) {
                 
-                ihm_drawSpriteInLab(j+ihm_context.margey, i+ihm_context.margex, ihm_context.lvl->dat[i][j]);
+                ihm_drawSpriteInLab(c+ihm_context.margex, l+ihm_context.margey, ihm_context.lvl->dat[l][c]);
 
             }
         }
@@ -354,19 +362,11 @@ int ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
     
     al_set_target_backbuffer(ihm_context.display);
     
-    if (cell & lvl_TARGET)    
-        al_draw_bitmap( ihm_context.sprites[ ihm_TARGET ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
+    if (cell & lvl_BAG)    
+        al_draw_bitmap( ihm_context.sprites[ ihm_BAG ], (posx) * ihm_context.dimSprite,  (posy) * ihm_context.dimSprite, 0);
     else 
-        al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
-    
-    cell &= ~lvl_movable;
-    
-    if (cell & lvl_PLAYER)    
-        al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
-    else 
-        al_draw_bitmap( ihm_context.sprites[ ihm_BAG ], (posx+ihm_context.margex) * ihm_context.dimSprite,  (posy+ihm_context.margey) * ihm_context.dimSprite, 0);
-    
-    
+        al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (posx) * ihm_context.dimSprite,  (posy) * ihm_context.dimSprite, 0);
+
     return 0;
 }
 

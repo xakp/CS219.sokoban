@@ -142,10 +142,13 @@ lvl_t* lvl_readLevel( int16_t num )
                     lvl->dat[l][i] = lvl_TARGET;
                     break;
                 case ENCODE_BAG:
-                    lvl->dat[l][i] = lvl_BAG;
+                    lvl->dat[l][i] = lvl_BAG | lvl_GROUND;
                     break;
                 case ENCODE_PLAYER:
-                    lvl->dat[l][i] = lvl_PLAYER;
+                    lvl->dat[l][i] = lvl_PLAYER | lvl_GROUND;
+                    break;
+                case ENCODE_BAG_TARGETED:
+                    lvl->dat[l][i] = lvl_TARGET | lvl_BAG;
                     break;
                 case ENCODE_GROUND:
                 default:

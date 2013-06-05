@@ -16,10 +16,10 @@ static struct {
     uint16_t y;
 } position_Player;
 /* pour simplifier le codage */
-#define px position_Player.x
-#define py position_Player.y
+#define px (position_Player.x)
+#define py (position_Player.y)
 
-#define lvl(X, Y) lvl->dat[Y][X] 
+#define lvl(X, Y) (lvl->dat[Y][X])
 
 
 /**
@@ -34,7 +34,7 @@ static void foundPlayer(lvl_t* lvl) {
     /* l'affiche dans le terminal */
     for (i=0; lvl->dat[i] != NULL ; i++ ) {
         for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) {
-            if ( lvl->dat[i][j] == lvl_PLAYER) {
+            if ( lvl->dat[i][j] & lvl_PLAYER) {
                 px = j;
                 py = i;
                 return ;
@@ -59,8 +59,8 @@ int testMove( lvl_t* lvl, Move mo ) {
     int ox, oy;
     
 
-    if ( lvl(px, py) != lvl_PLAYER) {
-         foundPlayer( lvl);
+    if ( !(lvl(px, py) & lvl_PLAYER)) {
+         foundPlayer( lvl );
     }
     
     switch ( mo ) {
@@ -88,16 +88,18 @@ int testMove( lvl_t* lvl, Move mo ) {
         break ;
     }
     
-    /* legal move */
-    if ( (lvl(px+ox, py+oy) & lvl_access) == 0 ||
-        (lvl(px+ox, py+oy) == lvl_BAG && (lvl(px+ox*2, py+oy*2) & lvl_access ) ) )
+    /* legal direct move */
+    if ( (lvl(px+ox, py+oy) & lvl_access) == 0 )
     {
-        
         return (1);
     }
-    else
-        return (0);
-    
+    /* legal push move */
+    else if ( ( lvl(px+ox, py+oy) & lvl_BAG ) && ((lvl(px+ox*2, py+oy*2) & lvl_access ) == 0 ) )
+    {
+        return (1);
+    }
+    /* illegal move */
+    return (0);
 }
 
 
@@ -117,10 +119,12 @@ movePlayed* playMove( lvl_t* lvl , Move mo )  {
     movePlayed* move = NULL;
     
     assert( move = malloc( sizeof (movePlayed) ) );
-    /* configure le move */
-    *move = mo;
     
 
+    if ( !(lvl(px, py) & lvl_PLAYER)) {
+         foundPlayer( lvl );
+    }
+    
     switch ( mo ) {
     case LEFT:
         ox = -1;
@@ -146,23 +150,29 @@ movePlayed* playMove( lvl_t* lvl , Move mo )  {
         break ;
     }
     
+        
+    /* add player P+1 */
+    lvl(px+ox, py+oy) = (lvl(px+ox, py+oy) | lvl_PLAYER);
+    /* delete player P */
+    lvl(px, py) &= ~lvl_PLAYER;
+    
+    
     /* un sac doit bouger */
-    if ( lvl(px+ox, py+oy) == lvl_BAG ) {
+    if ( ( lvl(px+ox, py+oy) & lvl_BAG ) && ((lvl(px+ox*2, py+oy*2) & lvl_access ) == 0 ) )
+    {
         /* leve le bit de poid fort */
         *move |= 0x80; /*0b10000000*/
         
         /* move bag by player */
         /* move bag P+2 */
-        lvl(px+ox*2, py+oy*2) |= lvl_BAG;
+        lvl( px+(ox*2), py+(oy*2) ) = (lvl( px+(ox*2), py+(oy*2) ) | lvl_BAG);
         /* delete bag P+1 */
-        lvl(px+ox, py+oy) &= ~lvl_BAG;
+        lvl(px+ox, py+oy) = (lvl(px+ox, py+oy) & (~lvl_BAG) );
     }
 
-    
-    /* add player P+1 */
-    lvl(px+ox, py+oy) |= lvl_PLAYER;
-    /* delete player P */
-    lvl(px, py) &= ~lvl_PLAYER;
+
+    /* configure le move */
+    *move = mo;
     
     return (move);
 }

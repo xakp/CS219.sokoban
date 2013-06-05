@@ -21,7 +21,7 @@ int testEngine () ;
 
 int main() {
 
-    return testEngine() ;
+    return testLog() ;
 }
 
 
@@ -80,9 +80,18 @@ int testLog ()
     else return -1;
     
     /*25 est à la fois start, selected et end car seul maillon de la chaine*/
-    log_insertAfter( log, ((void*)d1) );
+    log_insertAfter( log, ((void*)d1) ); log_next(log);
+    log_insertAfter( log, ((void*)d2) ); log_next(log);
+    log_insertAfter( log, ((void*)d3) ); log_next(log);
     printf("a "); _log_view(log);
 
+    log_start(log);
+    printf("b "); _log_view(log);
+    
+    log_freeForward(log);
+    log_freeForward(log);
+    log_freeForward(log);
+    printf("c "); _log_view(log);
 
     /*Test de log_insertBefore : cas elt selected est premier */
     log_insertAfter( log, ((void*)d2) );

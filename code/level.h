@@ -24,6 +24,7 @@
 #define ENCODE_GROUND ' '   /* ' ' */
 #define ENCODE_TARGET '.'   /* '.' */
 #define ENCODE_BAG '$'      /* '$' */
+#define ENCODE_BAG_TARGETED '*'      /* '*' */
 #define ENCODE_PLAYER '@'   /* '@' */
 
 
@@ -40,14 +41,14 @@ typedef enum {
     lvl_PLAYER  = 0x08, /*0b00001000,*/
     lvl_BAG     = 0x04, /*0b00000100,*/
     lvl_GROUND  = 0x02, /*0b00000010,*/
-    lvl_TARGET  = 0x01, /*0b00000001,*/
+    lvl_TARGET  = 0x01  /*0b00000001,*/
 /*    caracteristiques : caracteristiques & lvl_entity */
-    lvl_access  = 0xFC, /*0b11111100*/
-    lvl_movable = 0xFC /*0b11111001*/
+
     
 } lvl_cell;
 
-
+#define lvl_access (~(lvl_TARGET|lvl_GROUND))
+#define lvl_movable (lvl_PLAYER|lvl_BAG)
 
 /**
  * \struct Level
