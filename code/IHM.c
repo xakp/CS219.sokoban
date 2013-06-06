@@ -418,6 +418,96 @@ void ihm_drawInterface(visu_t* vtab, const int n) {
 }
 
 
+void ihm_drawIntro(const int W, const int H) {
+    
+    int y = 10;
+    int64_t t = 0;
+    KEY_CODE key;
+    ALLEGRO_COLOR colorText = al_map_rgb(255, 255, 255);
+    
+    restartTime();
+    
+    al_set_window_title(ihm_context.display, "Sokoban : Tutorial");
+    al_set_window_position( ihm_context.display, 100, 100);
+    al_set_target_backbuffer(ihm_context.display);
+    
+    while ( key != ALLEGRO_KEY_ENTER ) {
+        if (t != get_time()) {
+            t = get_time();
+            colorText = al_map_rgb(rand()%100+150, rand()%100+150, rand()%100+150);
+        }
+        newkey(&key);
+        al_rest(0.05);
+        y = 0;
+
+   
+        al_set_target_backbuffer(ihm_context.display);
+        al_clear_to_color( al_map_rgb(100, 100, 100) );
+        
+        y += 10;
+        al_draw_text(ihm_context.fontB, colorText, W/2, y, ALLEGRO_ALIGN_CENTRE, 
+            "Sokoban : SCHLOTTEYMARD");
+        
+        y += al_get_font_line_height( ihm_context.fontB ) + 10;
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "Z: Aller en haut");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "Q: Aller a gauche");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "S: Aller en bas");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "D: Aller a droite");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "O: Annuler un coup");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "P: Retablir un coup");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "C: Montre votre solution a ce niveau");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "W: Sauvegarder le niveau");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "X: Charger la sauvegarde de ce niveau");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "Fleche de gauche: Niveau precedent");
+            
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "Fleche de droite: Niveau suivant (si debloque bien sur)");
+        
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "Echape: Quitter");
+        
+        y += al_get_font_line_height( ihm_context.fontS )*1.5;
+        al_draw_text(ihm_context.fontS, colorText, W/2, y, ALLEGRO_ALIGN_CENTRE, 
+            "Appuyer sur [Enter] pour commencer");
+        
+        
+        
+        al_flip_display();
+    }
+
+}
+
+
 
 /* *************************************************** */
 /* ******************* evenements ******************** */ 

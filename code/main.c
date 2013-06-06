@@ -45,15 +45,23 @@ typedef enum {
 } Type_game ;
 
 
+/* reset tout les compteur de jeu */
+static void reset_counters(int *checked, int *nbrCanceled, int *nbrPushed, int *nbrPlayed);
 
-void setVisu(visu_t*, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget);
+/* configure les informations texte */
+static void setVisu(visu_t*, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget);
 
+/* sauvegarde la chaine des coups joues */
+static void save( lvl_t*, log_t*, Type_game );
 
+/* charge un niveau, selon le type, joue l'annimation */
+static int load(int num, lvl_t**, log_t**, Type_load );
 
-void save( lvl_t*, log_t*, Type_game );
-int load(int num, lvl_t**, log_t**, Type_load );
-int play( KEY_CODE, log_t*, lvl_t*, int*, int* );
-movePlayed_t* getEndElt();
+/* joue un coup selon une touche */
+static int play( KEY_CODE, log_t*, lvl_t*, int*, int* );
+
+/* renvoie un pointeur vers un maillon alloue contenant la donnee END */
+static movePlayed_t* getEndElt();
 
 
 /**
@@ -87,11 +95,14 @@ int main( int argc, char **argv )
 
     
     /* init l'IHM */
-    assert( ihm_init(256, 256, 0) == 0 );
+    assert( ihm_init(800, 400, 0) == 0 );
     if ( ihm_loadSpriteSheet("../data/spritesheet.png", 32) != 0 ) {
         puts("erreur chargement spritesheet\n");
         return (-1);
     }
+    
+    /* affiche quelque ligne d'explication */
+    ihm_drawIntro(800, 400);
     
     /* load le lvl 1 */
     if ( load( num, &lvl, &log, FROM_FILE ) != 0 ) {
@@ -133,31 +144,19 @@ int main( int argc, char **argv )
         /*Recommencer, precedent, suivant niveau */
             case ALLEGRO_KEY_R :
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
-                    checked = 0;
-                    nbrCanceled = 0;
-                    nbrPushed = 0;
-                    nbrPlayed = 0;
-                    restartTime();  
+                    reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 break;
             case ALLEGRO_KEY_LEFT :
                 num = ( --num < 1 ) ? 1 : num;
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
-                    checked = 0;
-                    nbrCanceled = 0;
-                    nbrPushed = 0;
-                    nbrPlayed = 0;
-                    restartTime();  
+                    reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 break;
             case ALLEGRO_KEY_RIGHT :
                 num = ( ++num > getNbrLvl() ) ? getNbrLvl() : num;
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
-                    checked = 0;
-                    nbrCanceled = 0;
-                    nbrPushed = 0;
-                    nbrPlayed = 0;
-                    restartTime();  
+                    reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 else {
                     num = ( --num < 1 ) ? 1 : num;
@@ -174,22 +173,14 @@ int main( int argc, char **argv )
             /* charge la partie sauvegardee */
             case ALLEGRO_KEY_X :
                 if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
-                    checked = 0;
-                    nbrCanceled = 0;
-                    nbrPushed = 0;
-                    nbrPlayed = 0;
-                    restartTime();
+                    reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 break;
                 
             /* charge la solution */
             case ALLEGRO_KEY_C :
                 if (load(num, &lvl, &log, FROM_SOLUTION ) == 0) {
-                    checked = 0;
-                    nbrCanceled = 0;
-                    nbrPushed = 0;
-                    nbrPlayed = 0;
-                    restartTime();
+                    reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                     stopTime();
                 }
                 break;
@@ -199,10 +190,7 @@ int main( int argc, char **argv )
                     /* passe au niveau suivant */
                     num = ( ++num > getNbrLvl() ) ? getNbrLvl() : num;
                     if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
-                        checked = 0;
-                        nbrCanceled = 0;
-                        nbrPushed = 0;
-                        nbrPlayed = 0;
+                        reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                         restartTime();
                     }
                 }
@@ -521,7 +509,7 @@ void setVisu(visu_t* visu, int num, int cancel, int play, int push, int64_t t, i
     sprintf(t_play, "Nombre de coups : %d", play);
     visu[2].txt = t_play;
     
-    sprintf(t_push, "Nombre de pousees : %d", push);
+    sprintf(t_push, "Nombre de poussees : %d", push);
     visu[3].txt = t_push;
     
     sprintf(t_t, "Temps : %d", (int)t);
@@ -536,4 +524,16 @@ void setVisu(visu_t* visu, int num, int cancel, int play, int push, int64_t t, i
 
 
 
- 
+void reset_counters(int *checked, int *nbrCanceled, int *nbrPushed, int *nbrPlayed) {
+    *checked = 0;
+    *nbrCanceled = 0;
+    *nbrPushed = 0;
+    *nbrPlayed = 0;
+    restartTime();
+}
+
+
+
+
+
+

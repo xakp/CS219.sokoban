@@ -1,0 +1,134 @@
+.TH "A:/GitHub/CS219.sokoban/code/IHM.h" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/IHM.h \- 
+.PP
+Mini-projet CS219 Sokoban\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+\fC#include <stdint\&.h>\fP
+.br
+\fC#include <allegro5/allegro5\&.h>\fP
+.br
+\fC#include <allegro5/allegro_image\&.h>\fP
+.br
+\fC#include <allegro5/allegro_ttf\&.h>\fP
+.br
+\fC#include <allegro5/allegro_font\&.h>\fP
+.br
+\fC#include 'level\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBvisu_t\fP"
+.br
+.RI "\fIla visu a afficher \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBNBR_SPRITES\fP   13"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef int \fBKEY_CODE\fP"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSprites\fP { \fBihm_PLAYER_RIGHT\fP = 0, \fBihm_PLAYER_LEFT\fP = 1, \fBihm_PLAYER_UP\fP = 2, \fBihm_PLAYER_DOWN\fP = 3, \fBihm_PLAYER_RIGHT_PUSH\fP = 4, \fBihm_PLAYER_LEFT_PUSH\fP = 5, \fBihm_PLAYER_UP_PUSH\fP = 6, \fBihm_PLAYER_DOWN_PUSH\fP = 7, \fBihm_BAG\fP = 8, \fBihm_TARGET\fP = 9, \fBihm_WALL\fP = 10, \fBihm_GROUND\fP = 11, \fBihm_BAG_OK\fP = 12 }"
+.br
+.RI "\fIles differents sprites a afficher \fP"
+.ti -1c
+.RI "enum \fBihm_size\fP { \fBBIG\fP, \fBSMALL\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBihm_init\fP (int w, int h, int flags)"
+.br
+.RI "\fIinitilise tout \fP"
+.ti -1c
+.RI "void \fBihm_close\fP ()"
+.br
+.ti -1c
+.RI "int \fBihm_loadSpriteSheet\fP (char *path, int dimsprite)"
+.br
+.ti -1c
+.RI "void \fBihm_loadLab\fP (\fBlvl_t\fP *lvl, int \fBmargex\fP, int \fBmargey\fP, int \fBdimText\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_drawSpriteInLab\fP (int posx, int posy, \fBlvl_cell\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_drawBackground\fP ()"
+.br
+.ti -1c
+.RI "void \fBihm_drawInterface\fP (\fBvisu_t\fP *, const int n)"
+.br
+.ti -1c
+.RI "int \fBihm_drawMovable\fP ()"
+.br
+.RI "\fIdessine les sacs et le player \fP"
+.ti -1c
+.RI "int \fBnewkey\fP (KEY_CODE *)"
+.br
+.ti -1c
+.RI "int \fBwindowClosed\fP ()"
+.br
+.ti -1c
+.RI "int64_t \fBget_time\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBrestartTime\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBstopTime\fP ()"
+.br
+.ti -1c
+.RI "int \fBmouseClicked\fP (int *, int *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS219 Sokoban\&. 
+
+\fBAuthor:\fP
+.RS 4
+EYMARD Gabrielle - SCHLOTTERBECK Guillaume 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+03/06/2013 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

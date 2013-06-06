@@ -1,0 +1,68 @@
+.TH "A:/GitHub/CS219.sokoban/code/level.c" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/level.c \- 
+.PP
+Fichier source : Gestion des fichier *\&.lvl\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'level\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBdatafile_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int8_t \fBlvl_openFileLvl\fP (char *fileName)"
+.br
+.RI "\fIOuvre le fichier de levels et configure datafile\&. \fP"
+.ti -1c
+.RI "\fBlvl_t\fP * \fBlvl_readLevel\fP (int16_t num)"
+.br
+.RI "\fICreer un objet \fBlvl_t\fP\&. \fP"
+.ti -1c
+.RI "int \fBgetNbrLvl\fP ()"
+.br
+.RI "\fIRenvoi le nombre de niveau dans le fichier\&. \fP"
+.ti -1c
+.RI "void \fBlvl_closeFileLvl\fP ()"
+.br
+.RI "\fIFerme le fichier de levels\&. \fP"
+.ti -1c
+.RI "void \fBlvl_closeLevel\fP (\fBlvl_t\fP *lvl)"
+.br
+.RI "\fILibere le level\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Fichier source : Gestion des fichier *\&.lvl\&. 
+
+\fBAuthor:\fP
+.RS 4
+SCHLOTTERBECK Guillaume - EYMARD Gabrielle 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+16/05/2013 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

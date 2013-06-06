@@ -1,0 +1,116 @@
+.TH "A:/GitHub/CS219.sokoban/code/log.h" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/log.h \- 
+.PP
+Mini-projet CS219 Sokoban\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBlog_actions_t\fP"
+.br
+.RI "\fIMaillon\&. \fP"
+.ti -1c
+.RI "struct \fBlog_t\fP"
+.br
+.RI "\fIChaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne\&. \fP"
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBlog_actions_t\fP \fBlog_actions_t\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBlog_t\fP * \fBlog_create\fP (size_t)"
+.br
+.ti -1c
+.RI "void \fBlog_destroy\fP (\fBlog_t\fP *)"
+.br
+.RI "\fIDetruit la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_save\fP (\fBlog_t\fP *, char *)"
+.br
+.RI "\fISauvegarde la liste\&. \fP"
+.ti -1c
+.RI "\fBlog_t\fP * \fBlog_load\fP (char *, size_t)"
+.br
+.ti -1c
+.RI "void \fBlog_next\fP (\fBlog_t\fP *)"
+.br
+.RI "\fISelectionne l'element suivant de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_previous\fP (\fBlog_t\fP *)"
+.br
+.RI "\fISelectionne l'element precedent de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_start\fP (\fBlog_t\fP *)"
+.br
+.RI "\fISelectionne le premier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_end\fP (\fBlog_t\fP *)"
+.br
+.RI "\fISelectionne le dernier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertAfter\fP (\fBlog_t\fP *, void *)"
+.br
+.RI "\fIAjout la donnee apres l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertBefore\fP (\fBlog_t\fP *, void *)"
+.br
+.RI "\fIAjout la donnee avant l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeSelected\fP (\fBlog_t\fP *)"
+.br
+.RI "\fIDetruit l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeForward\fP (\fBlog_t\fP *)"
+.br
+.RI "\fIDetruit les elements suivant l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeBackward\fP (\fBlog_t\fP *)"
+.br
+.RI "\fIDetruit les elements precedent l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeAll\fP (\fBlog_t\fP *)"
+.br
+.RI "\fIDetruit tous les elements\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS219 Sokoban\&. 
+
+\fBAuthor:\fP
+.RS 4
+EYMARD Gabrielle - SCHLOTTERBECK Guillaume 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+03/06/2013 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

@@ -1,0 +1,126 @@
+.TH "A:/GitHub/CS219.sokoban/code/engine.c" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/engine.c \- 
+.PP
+Mini-projet CS219 Sokoban\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'engine\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBpx\fP   (position_Player\&.x)"
+.br
+.ti -1c
+.RI "#define \fBpy\fP   (position_Player\&.y)"
+.br
+.ti -1c
+.RI "#define \fBlvl\fP(X, Y)   (lvl->dat[Y][X])"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBtestMove\fP (\fBlvl_t\fP *lvl, Move mo)"
+.br
+.RI "\fItest la validite du coup \fP"
+.ti -1c
+.RI "movePlayed_t * \fBplayMove\fP (\fBlvl_t\fP *lvl, Move mo)"
+.br
+.RI "\fIjoue le coup et renvoi la donnee a allouee \fP"
+.ti -1c
+.RI "void \fBrevertMove\fP (\fBlvl_t\fP *lvl, movePlayed_t *mp)"
+.br
+.RI "\fIannule le coup passe en param \fP"
+.ti -1c
+.RI "void \fBreplayMove\fP (\fBlvl_t\fP *lvl, movePlayed_t *mp)"
+.br
+.RI "\fIretablie le coup passe en param \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS219 Sokoban\&. 
+
+\fBAuthor:\fP
+.RS 4
+EYMARD Gabrielle - SCHLOTTERBECK Guillaume 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+03/06/2013 
+.RE
+.PP
+
+.SH "Function Documentation"
+.PP 
+.SS "movePlayed_t * playMove (\fBlvl_t\fP *lvl, Movemo)"
+
+.PP
+joue le coup et renvoi la donnee a allouee \fBParameters:\fP
+.RS 4
+\fIle\fP niveau concerne 
+.br
+\fIla\fP direction 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fIle\fP movement a logge (NULL => coup illegal) 
+.RE
+.PP
+
+.SS "void replayMove (\fBlvl_t\fP *lvl, movePlayed_t *mp)"
+
+.PP
+retablie le coup passe en param \fBParameters:\fP
+.RS 4
+\fIle\fP niveau concerne 
+.br
+\fIle\fP coup 
+.RE
+.PP
+
+.SS "void revertMove (\fBlvl_t\fP *lvl, movePlayed_t *mp)"
+
+.PP
+annule le coup passe en param \fBParameters:\fP
+.RS 4
+\fIle\fP niveau concerne 
+.br
+\fIle\fP coup 
+.RE
+.PP
+
+.SS "int testMove (\fBlvl_t\fP *lvl, Movemo)"
+
+.PP
+test la validite du coup \fBParameters:\fP
+.RS 4
+\fIle\fP niveau concerne 
+.br
+\fIla\fP direction 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fI0\fP : coup illegal, !0 sinon 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

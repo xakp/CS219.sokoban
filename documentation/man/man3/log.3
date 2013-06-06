@@ -1,0 +1,280 @@
+.TH ": Historique des coups joues" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+: Historique des coups joues \- 
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBlog_actions_t\fP"
+.br
+.RI "\fIMaillon\&. \fP"
+.ti -1c
+.RI "struct \fBlog_t\fP"
+.br
+.RI "\fIChaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBlog_destroy\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_save\fP (\fBlog_t\fP *logToSave, char *logName)"
+.br
+.RI "\fISauvegarde la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_next\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne l'element suivant de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_previous\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne l'element precedent de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_start\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne le premier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_end\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne le dernier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertAfter\fP (\fBlog_t\fP *log, void *dataInsert)"
+.br
+.RI "\fIAjout la donnee apres l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertBefore\fP (\fBlog_t\fP *log, void *dataInsert)"
+.br
+.RI "\fIAjout la donnee avant l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeSelected\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeForward\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit les elements suivant l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeBackward\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit les elements precedent l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeAll\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit tous les elements\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Permet de conserver en memoire chaque coup que le joueur aura effectue tout au long de la partie\&. Ainsi, il est possible de revenir en arriere ou de rejouer le coup suivant\&. Remarque : Si le joueur revient en arriere et joue une nouveau coup, tous les coups suivants sauvegardes en memoire sont supprimes pour que le coup qui vient d'etre joue devient le dernier coup joue\&. 
+.SH "Function Documentation"
+.PP 
+.SS "int log_destroy (\fBlog_t\fP *log)"
+
+.PP
+Detruit la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste a detruire 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "int log_end (\fBlog_t\fP *log)"
+
+.PP
+Selectionne le dernier element de la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "int log_freeAll (\fBlog_t\fP *log)"
+
+.PP
+Detruit tous les elements\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec
+.RE
+.PP
+\fBAttention:\fP
+.RS 4
+Libere la memoire associee a la donnee 
+.RE
+.PP
+
+.SS "int log_freeBackward (\fBlog_t\fP *log)"
+
+.PP
+Detruit les elements precedent l'element selectionne\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec
+.RE
+.PP
+L'element selectionne n'est pas detruit 
+.PP
+\fBAttention:\fP
+.RS 4
+Libere la memoire associee a la donnee 
+.RE
+.PP
+
+.SS "int log_freeForward (\fBlog_t\fP *log)"
+
+.PP
+Detruit les elements suivant l'element selectionne\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec
+.RE
+.PP
+L'element selectionne n'est pas detruit 
+.PP
+\fBAttention:\fP
+.RS 4
+Libere la memoire associee a la donnee 
+.RE
+.PP
+
+.SS "int log_freeSelected (\fBlog_t\fP *log)"
+
+.PP
+Detruit l'element selectionne\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec
+.RE
+.PP
+L'element selectionne sera le precedent, s'il n'y a pas de precedent, alors ce sera le suivant, sinon, #selected vaudra NULL 
+.PP
+\fBAttention:\fP
+.RS 4
+Libere la memoire associee a la donnee 
+.RE
+.PP
+
+.SS "int log_insertAfter (\fBlog_t\fP *log, void *dataInsert)"
+
+.PP
+Ajout la donnee apres l'element selecionnee\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.br
+\fILa\fP donnee 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "int log_insertBefore (\fBlog_t\fP *log, void *data)"
+
+.PP
+Ajout la donnee avant l'element selecionnee\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.br
+\fILa\fP donnee 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "int log_next (\fBlog_t\fP *log)"
+
+.PP
+Selectionne l'element suivant de la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "int log_previous (\fBlog_t\fP *log)"
+
+.PP
+Selectionne l'element precedent de la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SS "\fBlog_t\fP * log_save (\fBlog_t\fP *logToSave, char *logName)"
+
+.PP
+Sauvegarde la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste a sauver et le nom 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur 
+.RE
+.PP
+\fBAttention:\fP
+.RS 4
+Ecrase la sauvegarde precedente si le fichier existe deja 
+.RE
+.PP
+
+.SS "int log_start (\fBlog_t\fP *log)"
+
+.PP
+Selectionne le premier element de la liste\&. \fBParameters:\fP
+.RS 4
+\fILa\fP liste 
+.RE
+.PP
+\fBReturn values:\fP
+.RS 4
+\fICode\fP d'erreur Renvoie 0 si succes Renvoie une valeur differente de 0 si echec 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

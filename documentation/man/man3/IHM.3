@@ -1,0 +1,160 @@
+.TH "IHM" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IHM \- 
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBihm_context\fP"
+.br
+.RI "\fIinitilise tout globale et static\&. c'est le contexte graphique et evenemenciel\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBihm_init\fP (int w, int h, int flags)"
+.br
+.RI "\fIinitilise tout \fP"
+.ti -1c
+.RI "void \fBihm_close\fP ()"
+.br
+.ti -1c
+.RI "int \fBihm_loadSpriteSheet\fP (char *path, int \fBdimSprite\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_loadLab\fP (\fBlvl_t\fP *lvl, int \fBmargex\fP, int \fBmargey\fP, int \fBdimText\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_drawBackground\fP ()"
+.br
+.ti -1c
+.RI "int \fBihm_drawMovable\fP ()"
+.br
+.RI "\fIdessine les sacs et le player \fP"
+.ti -1c
+.RI "void \fBihm_drawSpriteInLab\fP (int posx, int posy, \fBlvl_cell\fP cell)"
+.br
+.ti -1c
+.RI "void \fBihm_drawInterface\fP (\fBvisu_t\fP *vtab, const int n)"
+.br
+.ti -1c
+.RI "int \fBnewkey\fP (KEY_CODE *key)"
+.br
+.ti -1c
+.RI "int \fBwindowClosed\fP ()"
+.br
+.ti -1c
+.RI "int \fBmouseClicked\fP (int *posx, int *posy)"
+.br
+.ti -1c
+.RI "int64_t \fBget_time\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBrestartTime\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBstopTime\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SH "Function Documentation"
+.PP 
+.SS "int get_time ()"
+
+.PP
+toute les seconde \fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SS "void ihm_close ()"
+\fBReturn values:\fP
+.RS 4
+\fI\\attention\fP ne libere pas le \fBlvl_t\fP 
+.RE
+.PP
+
+.SS "void ihm_drawBackground ()"
+\fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SS "void ihm_drawMovable ()"
+
+.PP
+dessine les sacs et le player \fBReturn values:\fP
+.RS 4
+\fIle\fP nombre de sac bien plasse c'est cette fonction qui renvoi le nombre de sac bien place parce que c'est la derniere a parcourir le lvl apres que le coup soit joue\&. on optimise donc le temps de calcul 
+.RE
+.PP
+
+.SS "int ihm_init (intw, inth, intflags)"
+
+.PP
+initilise tout \fBReturn values:\fP
+.RS 4
+\fIle\fP display 
+.RE
+.PP
+
+.SS "int ihm_loadSpriteSheet (char *path, intdimSprite)"
+\fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SS "int newkey (KEY_CODE *key)"
+\fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SS "int restartTime ()"
+
+.PP
+toute les seconde \fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SS "int windowClosed ()"
+\fBReturn values:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.SH "Variable Documentation"
+.PP 
+.SS "int dimSprite"
+dimention des sprite en pixels 
+.SS "int dimText"
+largeur du text en nombre de sprite\&. 
+.SS "ALLEGRO_EVENT_QUEUE* displayQueue"
+file pour les evenements display 
+.SS "int hlvl"
+hauteur du lvl en sprite\&. 
+.SS "ALLEGRO_EVENT_QUEUE* keyboardQueue"
+file pour les evenements clavier 
+.SS "int margex"
+en nombre de cellules de GROUND\&. 
+.SS "int margey"
+en nombre de cellules de GROUND\&. 
+.SS "ALLEGRO_EVENT_QUEUE* mouseQueue"
+file pour les evenements sourie 
+.SS "ALLEGRO_BITMAP** sprites"
+tableau des sprites, globale mais proteges 
+.SS "ALLEGRO_BITMAP* spritesheet"
+pointeur sur la sprtiteshhep, globale mais proteges 
+.SS "int wlvl"
+largeur du lvl en sprite 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

@@ -1,0 +1,41 @@
+.TH "lvl_t" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lvl_t \- 
+.PP
+Contient les informations necessaires a l'utilisation d'un niveau\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <level\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "uint32_t \fBnum\fP"
+.br
+.ti -1c
+.RI "uint16_t \fBnbrTarget\fP"
+.br
+.ti -1c
+.RI "\fBlvl_cell\fP ** \fBdat\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Contient les informations necessaires a l'utilisation d'un niveau\&. 
+.SH "Field Documentation"
+.PP 
+.SS "\fBlvl_cell\fP** dat"
+Tableau 2D vers les cellules du niveau\&. 
+.SS "uint16_t nbrTarget"
+Contient le nombre de cible dans le niveau 
+.SS "uint32_t num"
+Contient le numero du niveau 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

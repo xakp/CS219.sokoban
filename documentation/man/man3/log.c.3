@@ -1,0 +1,101 @@
+.TH "A:/GitHub/CS219.sokoban/code/log.c" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/log.c \- 
+.PP
+Mini-projet CS219 Sokoban\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stddef\&.h>\fP
+.br
+\fC#include 'log\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBlog_t\fP * \fBlog_create\fP (size_t s)"
+.br
+.ti -1c
+.RI "void \fBlog_destroy\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_save\fP (\fBlog_t\fP *logToSave, char *logName)"
+.br
+.RI "\fISauvegarde la liste\&. \fP"
+.ti -1c
+.RI "\fBlog_t\fP * \fBlog_load\fP (char *logName, size_t s)"
+.br
+.ti -1c
+.RI "void \fBlog_next\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne l'element suivant de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_previous\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne l'element precedent de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_start\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne le premier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_end\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fISelectionne le dernier element de la liste\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertAfter\fP (\fBlog_t\fP *log, void *dataInsert)"
+.br
+.RI "\fIAjout la donnee apres l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_insertBefore\fP (\fBlog_t\fP *log, void *dataInsert)"
+.br
+.RI "\fIAjout la donnee avant l'element selecionnee\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeSelected\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeForward\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit les elements suivant l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeBackward\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit les elements precedent l'element selectionne\&. \fP"
+.ti -1c
+.RI "void \fBlog_freeAll\fP (\fBlog_t\fP *log)"
+.br
+.RI "\fIDetruit tous les elements\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS219 Sokoban\&. 
+
+\fBAuthor:\fP
+.RS 4
+EYMARD Gabrielle - SCHLOTTERBECK Guillaume 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+03/06/2013 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

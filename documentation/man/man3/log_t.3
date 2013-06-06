@@ -1,0 +1,44 @@
+.TH "log_t" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+log_t \- 
+.PP
+Chaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <log\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "size_t \fBsize\fP"
+.br
+.ti -1c
+.RI "\fBlog_actions_t\fP * \fBstart\fP"
+.br
+.ti -1c
+.RI "\fBlog_actions_t\fP * \fBend\fP"
+.br
+.ti -1c
+.RI "\fBlog_actions_t\fP * \fBselected\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Chaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne\&. 
+.SH "Field Documentation"
+.PP 
+.SS "\fBlog_actions_t\fP* end"
+Le dernier maillon de la liste 
+.SS "\fBlog_actions_t\fP* selected"
+Le maillon selectionne 
+.SS "\fBlog_actions_t\fP* start"
+Le premier maillon de la liste 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

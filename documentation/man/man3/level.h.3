@@ -1,0 +1,129 @@
+.TH "A:/GitHub/CS219.sokoban/code/level.h" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/level.h \- 
+.PP
+Mini-projet CS210\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+\fC#include <stdint\&.h>\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBlvl_t\fP"
+.br
+.RI "\fIContient les informations necessaires a l'utilisation d'un niveau\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBUFFER_SIZE\fP   64"
+.br
+.RI "\fITampon pour lire les lignes de level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_WALL\fP   '#'"
+.br
+.RI "\fICaractere qui encode le mur dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_GROUND\fP   ' '"
+.br
+.RI "\fICaractere qui encode le sol dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_TARGET\fP   '\&.'"
+.br
+.RI "\fICaractere qui encode la cible dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_BAG\fP   '$'"
+.br
+.RI "\fICaractere qui encode le sac dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_BAG_TARGETED\fP   '*'"
+.br
+.RI "\fICaractere qui encode le sac stocke dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBENCODE_PLAYER\fP   '@'"
+.br
+.RI "\fICaractere qui encode le joueur dans level\&.lvl\&. \fP"
+.ti -1c
+.RI "#define \fBlvl_access\fP   (~(\fBlvl_TARGET\fP|\fBlvl_GROUND\fP))"
+.br
+.RI "\fIInforme si une lvl_cell est libre Exemple : ((cell & lvl_access) == 0) => cell est accessible\&. \fP"
+.ti -1c
+.RI "#define \fBlvl_movable\fP   (\fBlvl_PLAYER\fP|\fBlvl_BAG\fP)"
+.br
+.RI "\fIInforme si une lvl_cell est deplacable Exemple : ((cell & lvl_movable) == 0) => cell est deplacable\&. \fP"
+.ti -1c
+.RI "#define \fBlvl_bagStocked\fP   (\fBlvl_TARGET\fP|\fBlvl_BAG\fP)"
+.br
+.RI "\fIInforme si un sac se trouve sur une cible Exemple : ((cell & lvl_bagStocked) == 0) => cell est deplacable\&. \fP"
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBlvl_cell\fP { \fBlvl_NULL\fP = 0, \fBlvl_WALL\fP = 0x10, \fBlvl_PLAYER\fP = 0x08, \fBlvl_BAG\fP = 0x04, \fBlvl_GROUND\fP = 0x02, \fBlvl_TARGET\fP = 0x01 }"
+.br
+.RI "\fIles differentes entites dans une cellule \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBgetNbrLvl\fP ()"
+.br
+.RI "\fIRenvoi le nombre de niveau dans le fichier\&. \fP"
+.ti -1c
+.RI "int8_t \fBlvl_openFileLvl\fP (char *fileName)"
+.br
+.RI "\fIOuvre le fichier de levels et configure datafile\&. \fP"
+.ti -1c
+.RI "void \fBlvl_closeFileLvl\fP ()"
+.br
+.RI "\fIFerme le fichier de levels\&. \fP"
+.ti -1c
+.RI "\fBlvl_t\fP * \fBlvl_readLevel\fP (int16_t num)"
+.br
+.RI "\fICreer un objet \fBlvl_t\fP\&. \fP"
+.ti -1c
+.RI "void \fBlvl_closeLevel\fP (\fBlvl_t\fP *lvl)"
+.br
+.RI "\fILibere le level\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS210\&. 
+
+\fBAuthor:\fP
+.RS 4
+SCHLOTTERBECK Guillaume - EYMARD Gabrielle 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+16/05/2013 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

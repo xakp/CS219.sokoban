@@ -1,0 +1,111 @@
+.TH "A:/GitHub/CS219.sokoban/code/IHM.c" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/IHM.c \- 
+.PP
+Mini-projet CS219 Sokoban\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'IHM\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBihm_init\fP (int w, int h, int flags)"
+.br
+.RI "\fIinitilise tout \fP"
+.ti -1c
+.RI "void \fBihm_close\fP ()"
+.br
+.ti -1c
+.RI "int \fBihm_loadSpriteSheet\fP (char *path, int \fBdimSprite\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_loadLab\fP (\fBlvl_t\fP *lvl, int \fBmargex\fP, int \fBmargey\fP, int \fBdimText\fP)"
+.br
+.ti -1c
+.RI "void \fBihm_drawBackground\fP ()"
+.br
+.ti -1c
+.RI "int \fBihm_drawMovable\fP ()"
+.br
+.RI "\fIdessine les sacs et le player \fP"
+.ti -1c
+.RI "void \fBihm_drawSpriteInLab\fP (int posx, int posy, \fBlvl_cell\fP cell)"
+.br
+.ti -1c
+.RI "void \fBihm_drawInterface\fP (\fBvisu_t\fP *vtab, const int n)"
+.br
+.ti -1c
+.RI "int \fBnewkey\fP (KEY_CODE *key)"
+.br
+.ti -1c
+.RI "int \fBwindowClosed\fP ()"
+.br
+.ti -1c
+.RI "int \fBmouseClicked\fP (int *posx, int *posy)"
+.br
+.ti -1c
+.RI "int64_t \fBget_time\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBrestartTime\fP ()"
+.br
+.RI "\fItoute les seconde \fP"
+.ti -1c
+.RI "void \fBstopTime\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS219 Sokoban\&. 
+
+\fBAuthor:\fP
+.RS 4
+EYMARD Gabrielle - SCHLOTTERBECK Guillaume 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+03/06/2013 
+.RE
+.PP
+
+.SH "Variable Documentation"
+.PP 
+.SS "int dimSprite"
+dimention des sprite en pixels 
+.SS "int dimText"
+largeur du text en nombre de sprite\&. 
+.SS "ALLEGRO_EVENT_QUEUE* displayQueue"
+file pour les evenements display 
+.SS "int hlvl"
+hauteur du lvl en sprite\&. 
+.SS "ALLEGRO_EVENT_QUEUE* keyboardQueue"
+file pour les evenements clavier 
+.SS "int margex"
+en nombre de cellules de GROUND\&. 
+.SS "int margey"
+en nombre de cellules de GROUND\&. 
+.SS "ALLEGRO_EVENT_QUEUE* mouseQueue"
+file pour les evenements sourie 
+.SS "ALLEGRO_BITMAP** sprites"
+tableau des sprites, globale mais proteges 
+.SS "ALLEGRO_BITMAP* spritesheet"
+pointeur sur la sprtiteshhep, globale mais proteges 
+.SS "int wlvl"
+largeur du lvl en sprite 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.

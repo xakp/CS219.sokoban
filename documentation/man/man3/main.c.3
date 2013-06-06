@@ -1,0 +1,125 @@
+.TH "A:/GitHub/CS219.sokoban/code/main.c" 3 "Thu Jun 6 2013" "Version 1.0" "CS219 - Sokoban" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+A:/GitHub/CS219.sokoban/code/main.c \- 
+.PP
+Mini-projet CS210\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <stdio\&.h>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <string\&.h>\fP
+.br
+\fC#include <assert\&.h>\fP
+.br
+\fC#include <allegro5/allegro5\&.h>\fP
+.br
+\fC#include 'level\&.h'\fP
+.br
+\fC#include 'IHM\&.h'\fP
+.br
+\fC#include 'log\&.h'\fP
+.br
+\fC#include 'engine\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMARGEX\fP   1"
+.br
+.ti -1c
+.RI "#define \fBMARGEY\fP   1"
+.br
+.ti -1c
+.RI "#define \fBW_TEXT\fP   7"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBType_load\fP { \fBFROM_FILE\fP, \fBFROM_SAVE\fP, \fBFROM_SOLUTION\fP }"
+.br
+.ti -1c
+.RI "enum \fBType_game\fP { \fBSOLUTION\fP, \fBSIMPLE\fP }"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBsetVisu\fP (\fBvisu_t\fP *, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget)"
+.br
+.ti -1c
+.RI "void \fBsave\fP (\fBlvl_t\fP *, \fBlog_t\fP *, \fBType_game\fP)"
+.br
+.ti -1c
+.RI "int \fBload\fP (int num, \fBlvl_t\fP **, \fBlog_t\fP **, \fBType_load\fP)"
+.br
+.ti -1c
+.RI "int \fBplay\fP (KEY_CODE, \fBlog_t\fP *, \fBlvl_t\fP *, int *, int *)"
+.br
+.ti -1c
+.RI "movePlayed_t * \fBgetEndElt\fP ()"
+.br
+.ti -1c
+.RI "int \fBmain\fP (int argc, char **argv)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Mini-projet CS210\&. 
+
+\fBAuthor:\fP
+.RS 4
+SCHLOTTERBECK Guillaume - EYMARD Gabrielle 
+.RE
+.PP
+\fBVersion:\fP
+.RS 4
+1\&.0 
+.RE
+.PP
+\fBDate:\fP
+.RS 4
+05/06/2013 
+.RE
+.PP
+
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBType_game\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fISOLUTION \fP\fP
+on sauvegarde un solution 
+.TP
+\fB\fISIMPLE \fP\fP
+on sauvegarde une partie 
+.SS "enum \fBType_load\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIFROM_FILE \fP\fP
+on charge depuis le fichier de niveau 
+.TP
+\fB\fIFROM_SAVE \fP\fP
+on charge une partie deja existence 
+.TP
+\fB\fIFROM_SOLUTION \fP\fP
+on charge la solution 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for CS219 - Sokoban from the source code\&.
