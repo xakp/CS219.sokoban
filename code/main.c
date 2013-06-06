@@ -46,13 +46,13 @@ typedef enum {
 
 
 
-void setVisu(visu_t*, int num, int cancel, int play, int64_t t, int bagOK, int nbrTarget);
+void setVisu(visu_t*, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget);
 
 
 
 void save( lvl_t*, log_t*, Type_game );
 int load(int num, lvl_t**, log_t**, Type_load );
-int play( KEY_CODE, log_t*, lvl_t*, int* );
+int play( KEY_CODE, log_t*, lvl_t*, int*, int* );
 movePlayed_t* getEndElt();
 
 
@@ -69,12 +69,13 @@ int main( int argc, char **argv )
 
     int run;
     int checked = 0;
-    int bagOK = 0;
+    int bagStocked = 0;
     signed int num = 1;
     int nbrCanceled = 0;
+    int nbrPushed = 0;
     int nbrPlayed = 0;
     
-    visu_t visu[6];
+    visu_t visu[7];
     
     KEY_CODE key_k;
     
@@ -123,7 +124,7 @@ int main( int argc, char **argv )
                 if ((*(Move*)((log->selected)->data)) == END) {
                     break ;
                 }
-                nbrPlayed += play( key_k, log, lvl, &nbrCanceled );
+                nbrPlayed += play( key_k, log, lvl, &nbrCanceled, &nbrPushed );
                 
                 /* save log & load next */
                 
@@ -134,6 +135,7 @@ int main( int argc, char **argv )
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     checked = 0;
                     nbrCanceled = 0;
+                    nbrPushed = 0;
                     nbrPlayed = 0;
                     restartTime();  
                 }
@@ -143,6 +145,7 @@ int main( int argc, char **argv )
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     checked = 0;
                     nbrCanceled = 0;
+                    nbrPushed = 0;
                     nbrPlayed = 0;
                     restartTime();  
                 }
@@ -152,6 +155,7 @@ int main( int argc, char **argv )
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     checked = 0;
                     nbrCanceled = 0;
+                    nbrPushed = 0;
                     nbrPlayed = 0;
                     restartTime();  
                 }
@@ -172,6 +176,7 @@ int main( int argc, char **argv )
                 if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
                     checked = 0;
                     nbrCanceled = 0;
+                    nbrPushed = 0;
                     nbrPlayed = 0;
                     restartTime();
                 }
@@ -182,6 +187,7 @@ int main( int argc, char **argv )
                 if (load(num, &lvl, &log, FROM_SOLUTION ) == 0) {
                     checked = 0;
                     nbrCanceled = 0;
+                    nbrPushed = 0;
                     nbrPlayed = 0;
                     restartTime();
                     stopTime();
@@ -195,6 +201,7 @@ int main( int argc, char **argv )
                     if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
                         checked = 0;
                         nbrCanceled = 0;
+                        nbrPushed = 0;
                         nbrPlayed = 0;
                         restartTime();
                     }
@@ -211,14 +218,14 @@ int main( int argc, char **argv )
         
         /* on affiche */
         ihm_drawBackground();
-        bagOK = ihm_drawMovable();
-        setVisu( visu, lvl->num, nbrCanceled, nbrPlayed, get_time(), bagOK, lvl->nbrTarget );
-        ihm_drawInterface(visu, (checked) ? 6 : 5 );
+        bagStocked = ihm_drawMovable();
+        setVisu( visu, lvl->num, nbrCanceled, nbrPlayed, nbrPushed, get_time(), bagStocked, lvl->nbrTarget );
+        ihm_drawInterface(visu, (checked) ? 7 : 6 );
         
         al_flip_display();
         
         /* SI victoire ET victoire non prise en compte */
-        if ( (bagOK == lvl->nbrTarget) && !(checked) ) {
+        if ( (bagStocked == lvl->nbrTarget) && !(checked) ) {
             /* prise en conpte de la victoire */
             checked = 1; 
             
@@ -251,29 +258,37 @@ int main( int argc, char **argv )
 
 
 
-int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
+int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed ) {
+    movePlayed_t *move;
+    
     switch ( key ) {
 
     /*annuler/retablir*/
     /*retablir*/
     case ALLEGRO_KEY_P :
-        if ( (log->selected) != NULL ) {
-            if ( ((log->selected)->next) != NULL ) {
-                log_next( log );
-                replayMove(lvl, (movePlayed_t*)(log->selected)->data );
-                printf("move restored\n");
-                return (1);
-            }
+        if ( ( (log->selected) != NULL ) && ( ((log->selected)->next) != NULL ) ) {
+            log_next( log );
+            
+            move = (movePlayed_t*)(log->selected)->data;
+            (*nbrPushed) += ((*move) & PUSHED) ? 1 : 0;
+            
+            replayMove(lvl, move );
+            printf("Move replayed\n");
+            return (1);
         }
         break;
 
     /*annuler*/  
     case ALLEGRO_KEY_O :
         if ( ( (log->selected) != NULL ) && ( *(movePlayed_t*)((log->selected)->data) != START ) ) {
-            revertMove(lvl, (movePlayed_t*)(log->selected)->data );
+            
+            move = (movePlayed_t*)(log->selected)->data;
+            (*nbrPushed) -= ((*move) & PUSHED) ? 1 : 0;
+                 
+            revertMove(lvl, move );
             /* si le premier coup est revert, on se place sur start */
             log_previous( log );
-            printf("move canceled\n");
+            printf("Move reverted\n");
             *nbrCanceled = *nbrCanceled +1 ;
             return (-1);
         }
@@ -285,8 +300,11 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
     case ALLEGRO_KEY_Z :
         if ( testMove(lvl, UP) != 0 ) 
         {
+            move = playMove(lvl,UP);
+            (*nbrPushed) += ((*move) & PUSHED) ? 1 : 0;
+            
             log_freeForward(log);
-            log_insertAfter(log, playMove(lvl,UP));
+            log_insertAfter(log, move);
             log_next(log);
             return (1);
         }
@@ -296,8 +314,11 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
     case ALLEGRO_KEY_S :
         if ( testMove(lvl, DOWN) != 0 ) 
         {
+            move = playMove(lvl,DOWN);
+            (*nbrPushed) += ((*move) & PUSHED) ? 1 : 0;
+            
             log_freeForward(log);
-            log_insertAfter(log, playMove(lvl,DOWN));
+            log_insertAfter(log, move);
             log_next(log);
             return (1);
         }
@@ -308,8 +329,11 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
     case ALLEGRO_KEY_Q :
         if ( testMove(lvl, LEFT) != 0 ) 
         {
+            move = playMove(lvl,LEFT);
+            (*nbrPushed) += ((*move) & PUSHED) ? 1 : 0;
+            
             log_freeForward(log);
-            log_insertAfter(log, playMove(lvl,LEFT));
+            log_insertAfter(log, move);
             log_next(log);
             return (1);
         }
@@ -320,8 +344,11 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
     case ALLEGRO_KEY_D :
         if ( testMove(lvl, RIGHT) != 0 ) 
         {
+            move = playMove(lvl, RIGHT);
+            (*nbrPushed) += ((*move) & PUSHED) ? 1 : 0;
+            
             log_freeForward(log);
-            log_insertAfter(log, playMove(lvl, RIGHT));
+            log_insertAfter(log, move);
             log_next(log);
             return (1);
         }
@@ -461,26 +488,29 @@ void save( lvl_t* lvl, log_t* log, Type_game type ) {
 
 
 
-void setVisu(visu_t* visu, int num, int cancel, int play, int64_t t, int bagOK, int nbrTarget) {
+void setVisu(visu_t* visu, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget) {
     static char t_num   [32];
     static char t_cancel[32];
     static char t_play  [32];
+    static char t_push  [32];
     static char t_t     [32];
-    static char t_bagOK [32];
+    static char t_bagStocked [32];
     static char t_vict[] = "VICTOIRE";
 
     visu[0].color = al_map_rgb(0, 0, 0);
     visu[1].color = al_map_rgb(0, 0, 255);
     visu[2].color = al_map_rgb(0, 0, 255);
     visu[3].color = al_map_rgb(0, 0, 255);
-    visu[4].color = al_map_rgb(0, 150, 0);
+    visu[4].color = al_map_rgb(0, 0, 255);
     visu[5].color = al_map_rgb(0, 150, 0);
+    visu[6].color = al_map_rgb(0, 150, 0);
     visu[0].size = BIG;
     visu[1].size = SMALL;
     visu[2].size = SMALL;
     visu[3].size = SMALL;
     visu[4].size = SMALL;
-    visu[5].size = BIG;
+    visu[5].size = SMALL;
+    visu[6].size = BIG;
     
     sprintf(t_num, "NIVEAU %d", num);
     visu[0].txt = t_num;
@@ -491,13 +521,16 @@ void setVisu(visu_t* visu, int num, int cancel, int play, int64_t t, int bagOK, 
     sprintf(t_play, "Nombre de coups : %d", play);
     visu[2].txt = t_play;
     
+    sprintf(t_push, "Nombre de pousees : %d", push);
+    visu[3].txt = t_push;
+    
     sprintf(t_t, "Temps : %d", (int)t);
-    visu[3].txt = t_t;
+    visu[4].txt = t_t;
     
-    sprintf(t_bagOK, "Stock : %d/%d", bagOK, nbrTarget);
-    visu[4].txt = t_bagOK;
+    sprintf(t_bagStocked, "Stock : %d/%d", bagStocked, nbrTarget);
+    visu[5].txt = t_bagStocked;
     
-    visu[5].txt = t_vict;
+    visu[6].txt = t_vict;
 
 }
 

@@ -124,7 +124,7 @@ movePlayed_t* playMove( lvl_t* lvl , Move mo )  {
     if ( ( lvl(px+ox, py+oy) & lvl_BAG ) && ((lvl(px+ox*2, py+oy*2) & lvl_access ) == 0 ) )
     {
         /* leve le bit de poid fort */
-        *move |= 0x80; /*0b10000000*/
+        *move |= PUSHED; /*0b10000000*/
         
         /* move bag by player */
         /* move bag P+2 */
@@ -162,7 +162,7 @@ void revertMove( lvl_t* lvl, movePlayed_t* mp) {
     convertMove(*mp, &ox, &oy);
     
     /* player with bag */
-    if ( (*mp) & 0x80 )
+    if ( (*mp) & PUSHED )
     {
         /* move bag P+2 */
         lvl( px, py ) |= lvl_BAG;
@@ -200,7 +200,7 @@ void replayMove( lvl_t* lvl, movePlayed_t* mp ) {
     convertMove(*mp, &ox, &oy);
     
     /* player with bag */
-    if ( (*mp) & 0x80 )
+    if ( (*mp) & PUSHED )
     {
         /* move bag P+2 */
         lvl( px+(ox*2), py+(oy*2) ) |= lvl_BAG;
@@ -222,7 +222,7 @@ void replayMove( lvl_t* lvl, movePlayed_t* mp ) {
 static void convertMove(Move mo, int *ox, int *oy) {
     
     
-    switch ( mo & (~(0x80)) ) {
+    switch ( mo & (~(PUSHED)) ) {
     case LEFT:
         *ox = -1;
         *oy = +0;

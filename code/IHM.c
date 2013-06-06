@@ -351,7 +351,7 @@ void ihm_drawBackground() {
  */
 int ihm_drawMovable() {
     int l, c;
-    int bagOK = 0;
+    int bagStocked = 0;
 
     for (l=0; ihm_context.lvl->dat[l] != NULL ; l++ ) {
         for (c=0; ihm_context.lvl->dat[l][c] != lvl_NULL ; c++ ) {
@@ -359,14 +359,14 @@ int ihm_drawMovable() {
             if ( ((ihm_context.lvl->dat[l][c]) & lvl_movable) != 0) {
                 ihm_drawSpriteInLab(c+ihm_context.margex, l+ihm_context.margey, ihm_context.lvl->dat[l][c]);
                 
-                if ( ihm_context.lvl->dat[l][c] == lvl_bagOK ) {
-                    bagOK++;
+                if ( ihm_context.lvl->dat[l][c] == lvl_bagStocked ) {
+                    bagStocked++;
                 }
 
             }
         }
     }
-    return bagOK;
+    return bagStocked;
 }
 
 

@@ -27,6 +27,8 @@ typedef enum {
 } Move;
 
 
+#define PUSHED 0x80
+
 typedef unsigned int movePlayed_t;
 
 /* joue le coup et renvoi la donnee a allouee */

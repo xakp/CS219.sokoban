@@ -1,6 +1,6 @@
 /**
  * \file level.c
- * \brief Mini-projet CS210
+ * \brief Fichier source : Gestion des fichier *.lvl
  * \author SCHLOTTERBECK Guillaume - EYMARD Gabrielle
  * \version 1.0
  * \date 16/05/2013
@@ -9,41 +9,56 @@
 
 #include "level.h"
 
+
 /**
- * \struct Datafile
- * \brief static....
- * 
+ * \addtogroup Level
+ * \{
+ */
+
+
+/**
+ * \struct static struct datafile_t
+ * \brief Contient l'instance du fichier level.lvl ainsi que le nombre de niveau 
+ * Cette variable est globale parce que toutes les fonctions de ce fichier ont besoin de ces informations.
+ * Cette variable est static pour la proteger car elle est globale.
+ *
  */
 static struct datafile_t {
     char *name;         /*!< Nom du fichier. */
-    uint32_t nbrLvl;    /*!< Contient le numero du niveau. */
-    FILE *fd;           /*!< Instance du fichier */
+    uint32_t nbrLvl;    /*!< Contient le nombre de niveaux. */
+    FILE *fd;           /*!< Pointeur sur l'instance du fichier */
 } datafile = {NULL, 0, NULL};
 
 
 
 /**
- * \fn int8_t lvl_openFileLvl( char *file );
- * \brief ouvre le fichier de levels
+ * \fn int8_t lvl_openFileLvl( char * )
+ * \brief Ouvre le fichier de levels et configure datafile
+ * \param [in] char *
+ *  Nom du fichier contenant les niveaux a ouvrir
+ * \retval int8_t
+ * Renvoie 0 si OK, sinon, renvoie -1.
  * 
  */
-int8_t lvl_openFileLvl( char *file )
+int8_t lvl_openFileLvl( char *fileName )
 {
     /* buffer pour lire les lignes */
     char buff[BUFFER_SIZE];
-
-    if (file == NULL) {
+    
+    if (fileName == NULL) {
         fprintf(stderr, "error: openFileLvl(): nom du fichier non renseigne.\n");
     }
     
-    datafile.fd = fopen(file, "r");
+    /* ouvre le fichier et test l'ouverture */
+    datafile.fd = fopen(fileName, "r");
     if (datafile.fd == NULL) {
         fprintf(stderr, "error: openFileLvl(): nom du fichier non renseigne.\n");
     }
-    datafile.name = file;
+    datafile.name = fileName;
     
     /* cherche le nombre de niveau */
     while ( fgets(buff, BUFFER_SIZE, datafile.fd) != NULL ) {
+    
         /* on cherche l'occurence de ";MAXLEVEL" */
         if ( strstr(buff, ";MAXLEVEL") != NULL ) {
             sscanf(buff, ";MAXLEVEL %u\n", &(datafile.nbrLvl));
@@ -55,10 +70,12 @@ int8_t lvl_openFileLvl( char *file )
 
 
 /**
- * \fn lvl_t* readLevel( char *file, uint16_t num );
- * \brief Creer un objet %Level
- * 
- * C'est tres pratique !!
+ * \fn lvl_t* lvl_readLevel( int16_t num )
+ * \brief Creer un objet lvl_t
+ * \param [in] int16_t
+ *  Le numero du niveau a lire.
+ * \retval lvl_t * 
+ *  Renvoie NULL si la lecture echoue, sinon renvoie le pointeur sur lvl_t
  */
 lvl_t* lvl_readLevel( int16_t num )
 {
@@ -173,17 +190,21 @@ lvl_t* lvl_readLevel( int16_t num )
 }
 
 
+/**
+ * \fn int getNbrLvl()
+ * \brief Renvoi le nombre de niveau dans le fichier
+ * \retval int
+ * Le nombre de niveau dans le fichier
+ */
 int getNbrLvl() {
-
     return (datafile.nbrLvl);
-
 }
 
 
 
 /**
  * \fn void lvl_closeFileLvl();
- * \brief ferme le fichier de levels
+ * \brief Ferme le fichier de levels
  * 
  */
 void lvl_closeFileLvl() {
@@ -194,9 +215,10 @@ void lvl_closeFileLvl() {
 
 
 /**
- * \fn void lvl_closeLevel();
+ * \fn void lvl_closeLevel( lvl_t * )
  * \brief Libere le level
- * \param Level a liberer
+ * \param [in] lvl_t * 
+ *  Level a liberer
  * 
  */
 void lvl_closeLevel(lvl_t* lvl) {
@@ -217,4 +239,7 @@ void lvl_closeLevel(lvl_t* lvl) {
     free(lvl);
 }
 
+/**
+ * \}
+ */
 
