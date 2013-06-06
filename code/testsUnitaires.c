@@ -6,6 +6,27 @@
  * \date 04/06/2013
  *
  */
+ 
+ 
+ /*
+ 
+  
+// affiche le lvl dans la console
+if(0)for (i=0; lvl->dat[i] != NULL ; i++ ) {
+    for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) {
+        if      (lvl->dat[i][j] & lvl_PLAYER) c = '@';
+        else if ((lvl->dat[i][j] & lvl_TARGET) && (lvl->dat[i][j] & lvl_BAG)) c = '*';
+        else if (lvl->dat[i][j] & lvl_BAG) c = '$';
+        else if (lvl->dat[i][j] & lvl_TARGET) c = '.';
+        else if (lvl->dat[i][j] & lvl_WALL) c = '#';
+        else c = ' ';
+        printf("%c", c);
+    }
+    printf("\n");
+}
+
+
+*/
 
 #include <stdlib.h>
 #include <stddef.h>

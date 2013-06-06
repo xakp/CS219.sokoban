@@ -57,11 +57,12 @@ typedef enum {
  * 
  */
 typedef struct {
-    uint16_t num;   /*!< Contient le numero du niveau. */
+    uint32_t num;   /*!< Contient le numero du niveau. */
+    uint16_t nbrTarget;   /*!< Contient le numero du niveau. */
     lvl_cell **dat;     /*!< Tableau 2D vers les elements du niveau. */
 } lvl_t;
 
-
+int getNbrLvl();
 
 int8_t lvl_openFileLvl( char *file );
 void lvl_closeFileLvl();

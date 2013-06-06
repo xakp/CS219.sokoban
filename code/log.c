@@ -84,7 +84,7 @@ void log_destroy( log_t* log )
 void log_save( log_t* logToSave, char* logName )
 {
     /*On cree un pointeur sur fichier*/
-    FILE* fd; 
+    FILE* fd = NULL; 
     /*on cree un pointeur sur maillon*/
     log_actions_t* p; 
     
@@ -116,7 +116,7 @@ void log_save( log_t* logToSave, char* logName )
 log_t* log_load( char* logName, size_t s )
 {
     int run;
-    FILE* fd;
+    FILE* fd = NULL;
     void* tmp = NULL;
     log_t* logLoaded = log_create(s);
     assert( logLoaded != NULL);
@@ -135,7 +135,7 @@ log_t* log_load( char* logName, size_t s )
         assert(tmp != NULL);
         
         /*Si lecture reussie*/
-        if ( fread( tmp, s, 1, fd) == 1 ) 
+        if ( fread( tmp, s, 1, fd) != 0 ) 
         {
             /*Insere un maillon avec la donne lue*/
             log_insertAfter( logLoaded, tmp );

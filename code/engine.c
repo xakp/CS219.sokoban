@@ -15,6 +15,7 @@ static struct {
     uint16_t x;
     uint16_t y;
 } position_Player;
+
 /* pour simplifier le codage */
 #define px (position_Player.x)
 #define py (position_Player.y)
@@ -95,6 +96,11 @@ movePlayed_t* playMove( lvl_t* lvl , Move mo )  {
     int ox, oy;
     movePlayed_t* move = NULL;
     
+    /* si ce n'est pas un deplacement */
+    if ( (mo == START)  || (mo == END) ) {
+        return NULL;
+    }
+    
     assert( move = malloc( sizeof (movePlayed_t) ) );
     
 
@@ -143,6 +149,12 @@ movePlayed_t* playMove( lvl_t* lvl , Move mo )  {
 void revertMove( lvl_t* lvl, movePlayed_t* mp) {
     int ox, oy;
     
+    /* si ce n'est pas un deplacement */
+    if ( (*mp == START)  || (*mp == END) ) {
+        return ;
+    }
+    
+    /* localise le player */
     if ( !(lvl(px, py) & lvl_PLAYER)) {
          foundPlayer( lvl );
     }
@@ -176,6 +188,10 @@ void revertMove( lvl_t* lvl, movePlayed_t* mp) {
  */
 void replayMove( lvl_t* lvl, movePlayed_t* mp ) {
     int ox, oy;
+    
+    if ( ((*mp) == START) || ((*mp) == END) ) {
+        return ;
+    }
     
     if ( !(lvl(px, py) & lvl_PLAYER)) {
          foundPlayer( lvl );

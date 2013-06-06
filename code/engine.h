@@ -18,12 +18,12 @@
 
 /* les differentes directions */
 typedef enum {
-    LEFT = 0,
-    DOWN = 1,
-    RIGHT = 2,
-    UP = 3,
-    START = 4,
-    END = 5
+    LEFT = 1,
+    DOWN = 2,
+    RIGHT = 3,
+    UP = 4,
+    START = 5,
+    END = 6
 } Move;
 
 

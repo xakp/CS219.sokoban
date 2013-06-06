@@ -24,6 +24,7 @@
  */
  static struct {
     ALLEGRO_DISPLAY* display;
+    ALLEGRO_TIMER *timer;
     lvl_t* lvl;
     ALLEGRO_BITMAP* background;
     int margex;                         /*!< en nombre de cellules de GROUND. */
@@ -41,11 +42,11 @@
     ALLEGRO_EVENT_QUEUE *keyboardQueue; /*!< file pour les evenements clavier */
     ALLEGRO_EVENT_QUEUE *mouseQueue;    /*!< file pour les evenements sourie */
     ALLEGRO_EVENT_QUEUE *displayQueue;  /*!< file pour les evenements display */
-    
+  
     ALLEGRO_FONT *fontB;
     ALLEGRO_FONT *fontS;
     
-} ihm_context = {NULL, NULL, NULL, 0, 0, 0, 0, 5, -1, NULL, NULL, NULL, NULL, NULL}; 
+} ihm_context = {NULL, NULL, NULL, NULL, 0, 0, 0, 0, 5, -1, NULL, NULL, NULL, NULL, NULL}; 
  
 
 /**
@@ -59,7 +60,7 @@ static int init_event() {
     ihm_context.keyboardQueue = al_create_event_queue();
     ihm_context.mouseQueue    = al_create_event_queue();
     ihm_context.displayQueue  = al_create_event_queue();
-    
+
     /* teste les creations */
     if ( !(ihm_context.keyboardQueue && ihm_context.mouseQueue && ihm_context.displayQueue) ) {
         fprintf(stderr, "error to create event queue\n");
@@ -112,6 +113,13 @@ int ihm_init(int w, int h, int flags) {
         return (-1);
     }
     
+    /* initialise le timer */
+    ihm_context.timer = al_create_timer( 1 );
+    if (ihm_context.timer == NULL) {
+        fprintf(stderr, "error to create timer\n");
+        return (-1);
+    }
+    
     /* creer le display */
     al_set_new_display_flags(flags);
     ihm_context.display = al_create_display(w, h);
@@ -146,7 +154,7 @@ void ihm_close() {
     al_unregister_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
     al_unregister_event_source(ihm_context.mouseQueue, al_get_mouse_event_source());
     al_unregister_event_source(ihm_context.displayQueue, al_get_display_event_source(ihm_context.display));
-    
+     
 	al_destroy_event_queue(ihm_context.keyboardQueue);
 	al_destroy_event_queue(ihm_context.mouseQueue);
 	al_destroy_event_queue(ihm_context.displayQueue);
@@ -246,6 +254,9 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     /* en nombre de sprite */
     w = ihm_context.wlvl + 2*(ihm_context.margex) + ihm_context.dimText;
     h = ihm_context.hlvl + 2*(ihm_context.margey);
+    
+    /* window position */
+    al_set_window_position( ihm_context.display, 100, 100);
     
     /* resize */
     al_resize_display( ihm_context.display, L*w, L*h );
@@ -485,6 +496,36 @@ int mouseClicked(int* posx, int* posy) {
     return (0);
 }
 
+
+/**
+ * \fn int get_time()
+ * \brief toute les seconde
+ * \retval
+ * 
+ */
+int64_t get_time() {
+    
+    return ( al_get_timer_count(ihm_context.timer) );
+}
+
+/**
+ * \fn int restartTime()
+ * \brief toute les seconde
+ * \retval
+ * 
+ */
+void restartTime() {
+    al_set_timer_count(ihm_context.timer, 0);
+    
+    if ( !al_get_timer_started( ihm_context.timer ) ) {
+        al_start_timer( ihm_context.timer );
+    }
+}
+
+
+void stopTime() {
+    al_stop_timer( ihm_context.timer );
+}
 
 
 /* endGroup IHM */

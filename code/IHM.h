@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <assert.h>
+#include <stdint.h>
 
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
@@ -84,6 +84,9 @@ int     ihm_drawMovable();
 /* Fonctions relatives aux evenements */
 int     newkey( KEY_CODE* );
 int     windowClosed();
+int64_t get_time();
+void    restartTime();
+void    stopTime();
 int     mouseClicked(int*, int*);
 
 

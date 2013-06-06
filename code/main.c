@@ -23,22 +23,37 @@
 
 #include <allegro5/allegro5.h>
 
+#define MARGEX 1
+#define MARGEY 1
+#define W_TEXT 5
+
 
 #include "level.h"
 #include "IHM.h"
 #include "log.h"
 #include "engine.h"
 
+typedef enum {
+    FROM_FILE,  /*!< on charge depuis le fichier de niveau */
+    FROM_SAVE,  /*!< on charge une partie deja existence */
+    FROM_SOLUTION   /*!< on charge la solution */
+} Type_load ;
 
-enum {
-    restart
-    nextLVL
-    ....
-} tralala;
-
-tralala playGame( log, lvl ) 
+typedef enum {
+    SOLUTION,   /*!< on sauvegarde un solution */
+    SIMPLE      /*!< on sauvegarde une partie */
+} Type_game ;
 
 
+
+void setVisu(visu_t*, int num, int cancel, int64_t t, int bagOK);
+
+
+
+void save( lvl_t*, log_t*, Type_game );
+int load(int num, lvl_t**, log_t**, Type_load );
+int play( KEY_CODE, log_t*, lvl_t*, int* );
+movePlayed_t* getEndElt();
 
 
 /**
@@ -49,146 +64,109 @@ tralala playGame( log, lvl )
  */
 int main( int argc, char **argv )
 {
-    movePlayed_t* _start =  NULL;
     log_t* log = NULL;
-    
-    lvl_t* lvl;
+    lvl_t* lvl = NULL;
 
     int run;
     int bagOK = 0;
-    char c;
-    int num = 2;
-    int i, j;
+    signed int num = 1;
+    int nbrCanceled = 0;
     
-    visu_t visu[3];
+    visu_t visu[4];
+    
     KEY_CODE key_k;
     
-    /* creer la liste des coups */
-    log = log_create( sizeof (movePlayed_t) );
-    
-    /* initialise le maillon start    */
-    assert( _start = malloc( sizeof ( movePlayed_t ) ) );
-    *_start = START;
-    log_insertAfter(log, _start);
-    
-    
-    
-    
-    assert( ihm_init(256, 256, 0) == 0 ) ;
-
-    
     /* ouvre le fichier de level */
-    if (lvl_openFileLvl("../data/levels.lvl") != 0) 
-    {
+    if (lvl_openFileLvl("../data/levels.lvl") != 0) {
         puts("erreur\n");
         return (-1);
     }
+
     
-    lvl = lvl_readLevel( num );
-    if (lvl == NULL) {
-        puts("lecture impossible\n");
-        return (-1);
-    }
-    
+    /* init l'IHM */
+    assert( ihm_init(256, 256, 0) == 0 );
     if ( ihm_loadSpriteSheet("../data/spritesheet.png", 32) != 0 ) {
         puts("erreur chargement spritesheet\n");
         return (-1);
     }
     
-    ihm_loadLab( lvl, 1, 1, 5 );
+    /* load le lvl 1 */
+    if ( load( num, &lvl, &log, FROM_FILE ) != 0 ) {
+        printf("erreur to load lvl");
+        return (-1);
+    }
+    restartTime(); 
     
     run = 1;
     while ( !windowClosed() && run ) {
     
         if ( newkey(&key_k) ) {
-            
-            switch ( key_k ) {
-            
-            /*Autres evenements*/  
-            /*Charger un niveau (ecrase la partie sauvegardee sur ce niveau si elle existe*/
-        
-        /*annuler/retablir*/
-            /*retablir*/ 
-            case ALLEGRO_KEY_P :
-                if ( (log->selected) != NULL ) {
-                    if ( ((log->selected)->next) != NULL ) {
-                        log_next( log );
-                        replayMove(lvl, (log->selected)->data );
-                        printf("move restored\n");
-                    }
-                }
-                break;
-        
-            /*annuler*/  
-            case ALLEGRO_KEY_O :
-                if ( *(movePlayed_t*)((log->selected)->data) != START ) {
-                    revertMove(lvl, (log->selected)->data );
-                    log_previous( log );
-                    printf("move canceled\n");
-                }
-                break;
+        switch ( key_k ) {
 
-                
-        /*On quitte le programme*/  
+            /*On quitte le programme*/  
             case ALLEGRO_KEY_ESCAPE :
                 run = 0;
                 break;
+            
+            /* Jouer un coup */
+            case ALLEGRO_KEY_P:
+            case ALLEGRO_KEY_O:
+            case ALLEGRO_KEY_Z:
+            case ALLEGRO_KEY_Q:
+            case ALLEGRO_KEY_S:
+            case ALLEGRO_KEY_D:
+                if ((*(Move*)((log->selected)->data)) == END) {
+                    break ;
+                }
+                play( key_k, log, lvl, &nbrCanceled );
                 
-        /*Recommencer niveau
+                /* save log & load next */
+                
+                break ;
+                
+        /*Recommencer, precedent, suivant niveau */
             case ALLEGRO_KEY_R :
-                lvl_closeLevel( lvl );
-                lvl = lvl_readLevel( num );
-                if (lvl == NULL) {
-                    puts("lecture impossible\n");
-                    return (-1);
+                if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
+                    nbrCanceled = 0;
+                    restartTime();  
                 }
-                ihm_loadLab( lvl, 1, 1, 7 );
-                break;*/
-                
-                
-                
-        /*Deplacements*/
-            /*on deplace vers le haut*/
-            case ALLEGRO_KEY_Z :
-                if ( testMove(lvl, UP) != 0 ) 
-                {
-                    log_freeForward(log);
-                    log_insertAfter(log, playMove(lvl,UP));
-                    log_next(log);
+                break;
+            case ALLEGRO_KEY_LEFT :
+                num = ( --num < 1 ) ? 1 : num;
+                if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
+                    nbrCanceled = 0;
+                    restartTime();  
                 }
-                break ;
-                
-            /*on deplace vers le bas*/
-            case ALLEGRO_KEY_S :
-                if ( testMove(lvl, DOWN) != 0 ) 
-                {
-                    log_freeForward(log);
-                    log_insertAfter(log, playMove(lvl,DOWN));
-                    log_next(log);
+                break;
+            case ALLEGRO_KEY_RIGHT :
+                num = ( ++num > getNbrLvl() ) ? getNbrLvl() : num;
+                if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
+                    nbrCanceled = 0;
+                    restartTime();  
                 }
+                else {
+                    num = ( --num < 1 ) ? 1 : num;
+                }
+                break;
+            /* sauvegarde la partie en cours */
+            case ALLEGRO_KEY_W :
+                save( lvl, log, SIMPLE );
+                break;
             
-                break ;
-                
-            /*on deplace vers le gauche*/
-            case ALLEGRO_KEY_Q :
-                if ( testMove(lvl, LEFT) != 0 ) 
-                {
-                    log_freeForward(log);
-                    log_insertAfter(log, playMove(lvl,LEFT));
-                    log_next(log);
+            /* charge la partie sauvegardee */
+            case ALLEGRO_KEY_X :
+                if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
+                    nbrCanceled = 0;
+                    restartTime();
                 }
-            
-                break ;
+                break;
                 
-            /*on deplace vers le droite*/
-            case ALLEGRO_KEY_D :
-                if ( testMove(lvl, RIGHT) != 0 ) 
-                {
-                    log_freeForward(log);
-                    log_insertAfter(log, playMove(lvl,RIGHT));
-                    log_next(log);
+            /* charge la solution */
+            case ALLEGRO_KEY_C :
+                if (load(num, &lvl, &log, FROM_SOLUTION ) == 0) {
+                    nbrCanceled = 0;
+                    stopTime();
                 }
-                
                 break;
                 
             /*Ne rien faire*/
@@ -196,31 +174,40 @@ int main( int argc, char **argv )
             
             }/* !switch */
  
- 
-/* l'affiche dans le terminal */
-if(0)for (i=0; lvl->dat[i] != NULL ; i++ ) {
-    for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) {
-        if      (lvl->dat[i][j] & lvl_PLAYER) c = '@';
-        else if ((lvl->dat[i][j] & lvl_TARGET) && (lvl->dat[i][j] & lvl_BAG)) c = '*';
-        else if (lvl->dat[i][j] & lvl_BAG) c = '$';
-        else if (lvl->dat[i][j] & lvl_TARGET) c = '.';
-        else if (lvl->dat[i][j] & lvl_WALL) c = '#';
-        else c = ' ';
-        printf("%c", c);
-    }
-    printf("\n");
-}
 
         
         } /* ! if key */
         
+        
         /* on affiche */
         ihm_drawBackground();
         bagOK = ihm_drawMovable();
-        ihm_drawInterface(visu, 0);
+        setVisu( visu, lvl->num, nbrCanceled, get_time(), bagOK );
+        ihm_drawInterface(visu, 4);
         
         al_flip_display();
-
+        key_k = ALLEGRO_KEY_J;
+        /* La partie est terminee */
+        if (bagOK == lvl->nbrTarget) {
+            /* arrete le timer */
+            stopTime();
+            
+            /* ajoute le maillon END */
+            log_insertAfter( log, getEndElt() );
+            log_next( log );
+            
+            /* save la solution */
+            save( lvl, log, SOLUTION );
+            
+            /* passe au niveau suivant */
+            num = ( ++num > getNbrLvl() ) ? getNbrLvl() : num;
+            if (load(num, &lvl, &log, FROM_SAVE ) == 0) {
+                nbrCanceled = 0;
+                restartTime();
+            }
+            printf("TERMINE\n");
+            
+        }
         
         
     } /* ! while */
@@ -235,6 +222,230 @@ if(0)for (i=0; lvl->dat[i] != NULL ; i++ ) {
 
 
 
+
+
+int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled ) {
+    switch ( key ) {
+
+    /*annuler/retablir*/
+    /*retablir*/
+    case ALLEGRO_KEY_P :
+        if ( (log->selected) != NULL ) {
+            if ( ((log->selected)->next) != NULL ) {
+                log_next( log );
+                replayMove(lvl, (movePlayed_t*)(log->selected)->data );
+                printf("move restored\n");
+            }
+        }
+        break;
+
+    /*annuler*/  
+    case ALLEGRO_KEY_O :
+        if ( ( (log->selected) != NULL ) && ( *(movePlayed_t*)((log->selected)->data) != START ) ) {
+            revertMove(lvl, (movePlayed_t*)(log->selected)->data );
+            /* si le premier coup est revert, on se place sur start */
+            log_previous( log );
+            printf("move canceled\n");
+            *nbrCanceled = *nbrCanceled +1 ;
+        }
+        break;
+
+    
+    /*Deplacements*/
+    /*on deplace vers le haut*/
+    case ALLEGRO_KEY_Z :
+        if ( testMove(lvl, UP) != 0 ) 
+        {
+            log_freeForward(log);
+            log_insertAfter(log, playMove(lvl,UP));
+            log_next(log);
+            return (1);
+        }
+        break ;
+        
+    /*on deplace vers le bas*/
+    case ALLEGRO_KEY_S :
+        if ( testMove(lvl, DOWN) != 0 ) 
+        {
+            log_freeForward(log);
+            log_insertAfter(log, playMove(lvl,DOWN));
+            log_next(log);
+            return (1);
+        }
+    
+        break ;
+        
+    /*on deplace vers le gauche*/
+    case ALLEGRO_KEY_Q :
+        if ( testMove(lvl, LEFT) != 0 ) 
+        {
+            log_freeForward(log);
+            log_insertAfter(log, playMove(lvl,LEFT));
+            log_next(log);
+            return (1);
+        }
+    
+        break ;
+        
+    /*on deplace vers le droite*/
+    case ALLEGRO_KEY_D :
+        if ( testMove(lvl, RIGHT) != 0 ) 
+        {
+            log_freeForward(log);
+            log_insertAfter(log, playMove(lvl, RIGHT));
+            log_next(log);
+            return (1);
+        }
+        
+        break;
+        
+    /*Ne rien faire*/
+    default : break ;
+    
+    }/* !switch */
+    return (0);
+}
+
+
+movePlayed_t* getEndElt() {
+    movePlayed_t* end;
+    
+    assert( end = malloc( sizeof ( movePlayed_t ) ) );
+    *end = END;
+    
+    return (end);
+}
+
+
+
+int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
+
+    movePlayed_t* _start = NULL;
+    log_actions_t* sel = NULL;
+    char buff[32] = {0};
+    
+    /* on regarde si on a fini le niveau precedent */
+    sprintf(buff, "../save/level%d_(f).sav", num-1);
+    if ( (num != 1) && (!( al_filename_exists(buff) )) ) {
+        printf("error : %s doesn't exist\n", buff);
+        return (-1);
+    }
+    
+    printf("Tentative de chargement du niveau %d\n", num);
+    
+    lvl_closeLevel( *plvl );
+    *plvl = NULL;
+ 
+    assert( (*plvl) = lvl_readLevel( num ) );
+    
+    /* on veut charger un niveau qui est entame => nouvelle chaine */
+    if ( (ty == FROM_SAVE) || (ty == FROM_SOLUTION) ) {
+        /* une liste existe */
+        if ( *plog != NULL ) {
+            log_destroy( *plog );
+        }
+        if (ty == FROM_SOLUTION) {
+            sprintf(buff, "../save/level%d_(f).sav", num );
+        }
+        else {
+            sprintf(buff, "../save/level%d.sav", num );
+        }
+        
+        *plog = log_load( buff, ( sizeof (movePlayed_t) ));
+        
+        /* echec du chargement de la chaine => on charge le niveau normal */
+        if ( *plog == NULL )  {
+            ty = FROM_FILE;
+        }
+        /* reussite du chargement */
+        else {
+            log_start(*plog);
+            // ihm_loadLab( *plvl, MARGEX, MARGEY, W_TEXT );
+            for ( sel=(((*plog)->start)->next) ; sel != NULL ; sel = sel->next ) {
+                replayMove(*plvl, (movePlayed_t*)sel->data );
+                
+            }
+            log_end( *plog );
+            
+        }
+    }
+    
+    if ( ty == FROM_FILE ) {
+        /* la liste n'est pas instanciee */
+        if ( *plog == NULL ) {
+            *plog = log_create( sizeof (movePlayed_t) );
+            
+            /* initialise le maillon start    */
+            assert( _start = malloc( sizeof ( movePlayed_t ) ) );
+            *_start = START;
+            log_insertAfter(*plog, _start);
+        }
+        /* reinitialise la liste */
+        else {
+            log_start( *plog );
+            log_freeForward( *plog );
+        }
+    }
+    
+    ihm_loadLab( *plvl, MARGEX, MARGEY, W_TEXT );
+    
+    return (0);
+    
+}
+
+
+
+void save( lvl_t* lvl, log_t* log, Type_game type ) {
+
+
+    char buff[32] = {0};
+    
+    /* si il y a que le maillon start */
+    if ( (*(Move*)((log->start)->data)) == (*(Move*)((log->end)->data)) ) {
+        return ;
+    }
+    
+    if ( type == SOLUTION ) {
+        sprintf(buff, "../save/level%d_(f).sav", lvl->num);
+    }
+    else {
+        sprintf(buff, "../save/level%d.sav", lvl->num);
+    }
+    log_save( log, buff );
+    printf("Savegarde dans %s\n", buff);
+}
+
+
+
+
+void setVisu(visu_t* visu, int num, int cancel, int64_t t, int bagOK) {
+    static char t_num[16];
+    static char t_cancel[16];
+    static char t_t[16];
+    static char t_bagOK[16];
+
+    visu[0].color = al_map_rgb(0, 0, 0);
+    visu[1].color = al_map_rgb(0, 0, 255);
+    visu[2].color = al_map_rgb(0, 0, 255);
+    visu[3].color = al_map_rgb(0, 150, 0);
+    visu[0].size = BIG;
+    visu[1].size = SMALL;
+    visu[2].size = SMALL;
+    visu[3].size = SMALL;
+    
+    sprintf(t_num, "NIVEAU %d", num);
+    visu[0].txt = t_num;
+    
+    sprintf(t_cancel, "Cancel : %d", cancel);
+    visu[1].txt = t_cancel;
+    
+    sprintf(t_t, "Temps : %d", (int)t);
+    visu[2].txt = t_t;
+    
+    sprintf(t_bagOK, "Stock : %d", bagOK);
+    visu[3].txt = t_bagOK;
+
+}
 
 
 

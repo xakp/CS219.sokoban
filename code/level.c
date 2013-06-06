@@ -122,7 +122,9 @@ lvl_t* lvl_readLevel( int16_t num )
     /* on se replace au debut du niveau */
     rewind(datafile.fd);
     fsetpos(datafile.fd, &pos);
-        
+    
+    lvl->nbrTarget = 0;
+    
     /* charge le niveau ligne par ligne */
     for (l=0 ; l<nbL ; l++) {
         /* on sait que la lecture est possible car on la deja fait */
@@ -131,7 +133,7 @@ lvl_t* lvl_readLevel( int16_t num )
         len = strlen(buff);
         /* on allou et verivie l'allocation de la ligne */
         assert( lvl->dat[l] = malloc( (len) * sizeof (lvl_cell) ) );
-        
+
         /* on remplie la ligne */
         for (i=0 ; i<len ; i++) {
             switch ( buff[i] ) {
@@ -140,6 +142,7 @@ lvl_t* lvl_readLevel( int16_t num )
                     break;
                 case ENCODE_TARGET:
                     lvl->dat[l][i] = lvl_TARGET;
+                    lvl->nbrTarget = lvl->nbrTarget + 1;
                     break;
                 case ENCODE_BAG:
                     lvl->dat[l][i] = lvl_BAG | lvl_GROUND;
@@ -149,6 +152,7 @@ lvl_t* lvl_readLevel( int16_t num )
                     break;
                 case ENCODE_BAG_TARGETED:
                     lvl->dat[l][i] = lvl_TARGET | lvl_BAG;
+                    lvl->nbrTarget = lvl->nbrTarget + 1;
                     break;
                 case ENCODE_GROUND:
                 default:
@@ -169,6 +173,14 @@ lvl_t* lvl_readLevel( int16_t num )
 }
 
 
+int getNbrLvl() {
+
+    return (datafile.nbrLvl);
+
+}
+
+
+
 /**
  * \fn void lvl_closeFileLvl();
  * \brief ferme le fichier de levels
@@ -178,6 +190,9 @@ void lvl_closeFileLvl() {
     fclose(datafile.fd);
 }
 
+
+
+
 /**
  * \fn void lvl_closeLevel();
  * \brief Libere le level
@@ -186,6 +201,10 @@ void lvl_closeFileLvl() {
  */
 void lvl_closeLevel(lvl_t* lvl) {
     lvl_cell** l;
+
+    if ( lvl == NULL )
+        return ;
+
     l = lvl->dat;
     
     /* libere les lignes */
