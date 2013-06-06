@@ -418,12 +418,15 @@ void ihm_drawInterface(visu_t* vtab, const int n) {
 }
 
 
-void ihm_drawIntro(const int W, const int H) {
-    
-    int y = 10;
+void ihm_drawIntro() {
+    int W;
+    int y = 15;
     int64_t t = 0;
     KEY_CODE key;
     ALLEGRO_COLOR colorText = al_map_rgb(255, 255, 255);
+     
+    W = al_get_display_width( ihm_context.display );
+    /*H = al_get_display_height( ihm_context.display ); */
     
     restartTime();
     
@@ -466,12 +469,16 @@ void ihm_drawIntro(const int W, const int H) {
             
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
-            "O: Annuler un coup");
+            "E: Annuler un coup");
             
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
-            "P: Retablir un coup");
+            "R: Retablir un coup");
             
+        y += al_get_font_line_height( ihm_context.fontS );
+        al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
+            "T: Recomencer le niveau");
+        
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
             "C: Montre votre solution a ce niveau");
@@ -499,9 +506,7 @@ void ihm_drawIntro(const int W, const int H) {
         y += al_get_font_line_height( ihm_context.fontS )*1.5;
         al_draw_text(ihm_context.fontS, colorText, W/2, y, ALLEGRO_ALIGN_CENTRE, 
             "Appuyer sur [Enter] pour commencer");
-        
-        
-        
+                
         al_flip_display();
     }
 

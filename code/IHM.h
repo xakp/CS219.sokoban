@@ -79,7 +79,7 @@ void    ihm_drawSpriteInLab(int posx, int posy, lvl_cell);
 void    ihm_drawBackground();
 void    ihm_drawInterface( visu_t*, const int n );
 int     ihm_drawMovable();
-void    ihm_drawIntro(const int, const int);
+void    ihm_drawIntro();
 
 
 /* Fonctions relatives aux evenements */

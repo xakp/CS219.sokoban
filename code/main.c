@@ -95,14 +95,14 @@ int main( int argc, char **argv )
 
     
     /* init l'IHM */
-    assert( ihm_init(800, 400, 0) == 0 );
+    assert( ihm_init(800, 440, 0) == 0 );
     if ( ihm_loadSpriteSheet("../data/spritesheet.png", 32) != 0 ) {
         puts("erreur chargement spritesheet\n");
         return (-1);
     }
     
     /* affiche quelque ligne d'explication */
-    ihm_drawIntro(800, 400);
+    ihm_drawIntro();
     
     /* load le lvl 1 */
     if ( load( num, &lvl, &log, FROM_FILE ) != 0 ) {
@@ -123,12 +123,12 @@ int main( int argc, char **argv )
                 break;
             
             /* Jouer un coup */
-            case ALLEGRO_KEY_P:
-            case ALLEGRO_KEY_O:
-            case ALLEGRO_KEY_Z:
-            case ALLEGRO_KEY_Q:
-            case ALLEGRO_KEY_S:
-            case ALLEGRO_KEY_D:
+            case ALLEGRO_KEY_R: /* redo */
+            case ALLEGRO_KEY_E: /* undo */
+            case ALLEGRO_KEY_Z: /* haut */
+            case ALLEGRO_KEY_Q: /* gauche */
+            case ALLEGRO_KEY_S: /* bas */
+            case ALLEGRO_KEY_D: /* droite */
                 /* si on a gagne, on interdit le deplacement */
                 if ( checked ) 
                     break;
@@ -142,7 +142,7 @@ int main( int argc, char **argv )
                 break ;
                 
         /*Recommencer, precedent, suivant niveau */
-            case ALLEGRO_KEY_R :
+            case ALLEGRO_KEY_T :
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
@@ -253,7 +253,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
 
     /*annuler/retablir*/
     /*retablir*/
-    case ALLEGRO_KEY_P :
+    case ALLEGRO_KEY_R :
         if ( ( (log->selected) != NULL ) && ( ((log->selected)->next) != NULL ) ) {
             log_next( log );
             
@@ -267,7 +267,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
         break;
 
     /*annuler*/  
-    case ALLEGRO_KEY_O :
+    case ALLEGRO_KEY_E :
         if ( ( (log->selected) != NULL ) && ( *(movePlayed_t*)((log->selected)->data) != START ) ) {
             
             move = (movePlayed_t*)(log->selected)->data;
