@@ -404,7 +404,7 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
             ihm_loadLab( *plvl, MARGEX, MARGEY, W_TEXT );
             log_start(*plog);
             
-            for ( sel=(((*plog)->start)->next) ; sel != NULL ; sel = sel->next ) {
+            for ( sel=(((*plog)->start)) ; sel != NULL ; sel = sel->next ) {
                 replayMove(*plvl, (movePlayed_t*)sel->data );
                 
                 /* si on veut la solution, on la fait defiler */
