@@ -4,6 +4,7 @@
  * \author EYMARD Gabrielle - SCHLOTTERBECK Guillaume
  * \version 1.0
  * \date 03/06/2013
+ * Gestion du temps, du clavier, et du dessin.
  *
  */
 
@@ -33,18 +34,18 @@ typedef int KEY_CODE;
  * 
  */
 typedef enum {  
-    ihm_PLAYER_RIGHT = 0,        /*!<  */
-    ihm_PLAYER_LEFT = 1,       /*!<  */
+    ihm_PLAYER_RIGHT = 0,       /*!<  */
+    ihm_PLAYER_LEFT = 1,        /*!<  */
     ihm_PLAYER_UP = 2,          /*!<  */
     ihm_PLAYER_DOWN = 3,        /*!<  */
-    ihm_PLAYER_RIGHT_PUSH = 4,   /*!<  */
-    ihm_PLAYER_LEFT_PUSH = 5,  /*!<  */
+    ihm_PLAYER_RIGHT_PUSH = 4,  /*!<  */
+    ihm_PLAYER_LEFT_PUSH = 5,   /*!<  */
     ihm_PLAYER_UP_PUSH = 6,     /*!<  */
     ihm_PLAYER_DOWN_PUSH = 7,   /*!<  */
-    ihm_BAG = 8,             /*!<  */
-    ihm_TARGET = 9,                /*!<  */
+    ihm_BAG = 8,                /*!<  */
+    ihm_TARGET = 9,             /*!<  */
     ihm_WALL = 10,              /*!<  */
-    ihm_GROUND = 11,             /*!<  */
+    ihm_GROUND = 11,            /*!<  */
     ihm_BAG_OK = 12             /*!<  */
 } Sprites;
 #define NBR_SPRITES 13
@@ -67,17 +68,15 @@ typedef struct {
 } visu_t;
 
 
-
-/* initialise allegro ET le module clavier d'allegro, creer une pile en globale static ET lespiles d'events de display... */
+/* initialise allegro ET le module clavier d'allegro, cree une file en globale static ET les files d'events de display... */
 int     ihm_init(int w, int h, int flags);
 void    ihm_close();
 
 /* Fonctions relatives a l'affichage. */
 int     ihm_loadSpriteSheet(char* path, int dimsprite);
 void    ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText);
-void    ihm_drawSpriteInLab(int posx, int posy, lvl_cell);
 void    ihm_drawBackground();
-void    ihm_drawInterface( visu_t*, const int n );
+void    ihm_drawInterface( visu_t *, const int n );
 int     ihm_drawMovable();
 void    ihm_drawIntro();
 
@@ -85,12 +84,11 @@ void    ihm_drawIntro();
 /* Fonctions relatives aux evenements */
 int     newkey( KEY_CODE* );
 int     windowClosed();
+
+/* Fonction relative au temps */
 int64_t get_time();
 void    restartTime();
 void    stopTime();
-int     mouseClicked(int*, int*);
-
-
 
 
 #endif

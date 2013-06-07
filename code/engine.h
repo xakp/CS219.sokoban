@@ -4,6 +4,7 @@
  * \author EYMARD Gabrielle - SCHLOTTERBECK Guillaume
  * \version 1.0
  * \date 03/06/2013
+ * C'est le moteur du jeu, c'est lui qui teste, qui joue, qui annule et qui retablie les coups.
  *
  */
 
@@ -31,16 +32,16 @@ typedef enum {
 
 typedef unsigned int movePlayed_t;
 
-/* joue le coup et renvoi la donnee a allouee */
-movePlayed_t* playMove( lvl_t* , Move );
-
-/* test la validite du coup */
+/* test la validite du mouvement */
 int testMove( lvl_t*, Move );
 
-/* annule le coup passe en param */
+/* joue le mouvement et renvoi la donnee a sauvegarder */
+movePlayed_t* playMove( lvl_t* , Move );
+
+/* annule le coup passe en parametre */
 void revertMove( lvl_t*, movePlayed_t*  );
 
-/* retablie un move */
+/* retabli un mouvement */
 void replayMove( lvl_t*, movePlayed_t*  );
 
 

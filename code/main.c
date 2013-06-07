@@ -470,7 +470,7 @@ void save( lvl_t* lvl, log_t* log, Type_game type ) {
         sprintf(buff, "../save/level%d.sav", lvl->num);
     }
     log_save( log, buff );
-    printf("Savegarde dans %s\n", buff);
+    printf("Sauvegarde dans %s\n", buff);
 }
 
 

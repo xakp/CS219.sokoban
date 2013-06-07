@@ -184,7 +184,7 @@ void ihm_close() {
 
 /**
  * \fn int ihm_loadSpriteSheet(char* path, int dimSprite)
- * \brief 
+ * \brief Charge la spritesheet, et la decoupe en tableau de sprites
  * \retval
  * 
  */
@@ -352,13 +352,20 @@ void ihm_drawBackground() {
 int ihm_drawMovable() {
     int l, c;
     int bagStocked = 0;
+    
+    al_set_target_backbuffer(ihm_context.display);
 
     for (l=0; ihm_context.lvl->dat[l] != NULL ; l++ ) {
         for (c=0; ihm_context.lvl->dat[l][c] != lvl_NULL ; c++ ) {
         
             if ( ((ihm_context.lvl->dat[l][c]) & lvl_movable) != 0) {
-                ihm_drawSpriteInLab(c+ihm_context.margex, l+ihm_context.margey, ihm_context.lvl->dat[l][c]);
-                
+
+                if (ihm_context.lvl->dat[l][c] & lvl_BAG)    
+                    al_draw_bitmap( ihm_context.sprites[ ihm_BAG ], (c+ihm_context.margex) * ihm_context.dimSprite,  (l+ihm_context.margey) * ihm_context.dimSprite, 0);
+                else 
+                    al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (c+ihm_context.margex) * ihm_context.dimSprite,  (l+ihm_context.margey) * ihm_context.dimSprite, 0);
+
+
                 if ( ihm_context.lvl->dat[l][c] == lvl_bagStocked ) {
                     bagStocked++;
                 }
@@ -368,27 +375,6 @@ int ihm_drawMovable() {
     }
     return bagStocked;
 }
-
-
-
-
-/**
- * \fn int ihm_drawSpriteInLab(ihm_lab* lab, int posx, int posy, Sprites sp)
- * \brief 
- * \retval
- * 
- */
-void ihm_drawSpriteInLab(int posx, int posy, lvl_cell cell) {
-    
-    al_set_target_backbuffer(ihm_context.display);
-    
-    if (cell & lvl_BAG)    
-        al_draw_bitmap( ihm_context.sprites[ ihm_BAG ], (posx) * ihm_context.dimSprite,  (posy) * ihm_context.dimSprite, 0);
-    else 
-        al_draw_bitmap( ihm_context.sprites[ ihm_PLAYER_DOWN ], (posx) * ihm_context.dimSprite,  (posy) * ihm_context.dimSprite, 0);
-
-}
-
 
 
 
