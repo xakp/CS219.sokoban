@@ -18,8 +18,8 @@
 
 /**
  * \struct ihm_context
- * \brief initilise tout
- * globale et static. c'est le contexte graphique et evenemenciel.
+ * \brief Initialise tout
+ * Globale et static : c'est le contexte graphique et evenementiel.
  * 
  */
  static struct {
@@ -35,12 +35,12 @@
     
     int dimText;                        /*!< largeur du text en nombre de sprite. */
     
-    int dimSprite;                      /*!< dimention des sprite en pixels */
-    ALLEGRO_BITMAP* spritesheet;        /*!< pointeur sur la sprtiteshhep, globale mais proteges */
-    ALLEGRO_BITMAP** sprites;           /*!< tableau des sprites, globale mais proteges */
+    int dimSprite;                      /*!< dimension des sprites en pixels */
+    ALLEGRO_BITMAP* spritesheet;        /*!< pointeur sur la sprtitesheet */
+    ALLEGRO_BITMAP** sprites;           /*!< tableau des sprites */
     
     ALLEGRO_EVENT_QUEUE *keyboardQueue; /*!< file pour les evenements clavier */
-    ALLEGRO_EVENT_QUEUE *mouseQueue;    /*!< file pour les evenements sourie */
+    ALLEGRO_EVENT_QUEUE *mouseQueue;    /*!< file pour les evenements souris */
     ALLEGRO_EVENT_QUEUE *displayQueue;  /*!< file pour les evenements display */
   
     ALLEGRO_FONT *fontB;
@@ -51,12 +51,12 @@
 
 /**
  * \fn static int init_event()
- * \brief initilise les events
+ * \brief initialise les files d'evennements
  * \retval 0 : ok
  * 
  */
 static int init_event() {
-    /* creer les 3 files d'evenement */
+    /* cree les 3 files d'evenement */
     ihm_context.keyboardQueue = al_create_event_queue();
     ihm_context.mouseQueue    = al_create_event_queue();
     ihm_context.displayQueue  = al_create_event_queue();
@@ -80,7 +80,8 @@ static int init_event() {
 
 /**
  * \fn static int init_text(int sizeH, sizeL)
- * \brief la taille
+ * \brief initialise le module texte graphique : font, ttf
+ * \param les tailles des petite et grande polices
  * \retval 0 : ok
  * 
  */
@@ -97,7 +98,7 @@ static int init_text(int sizeH, int sizeL) {
 
 /**
  * \fn int ihm_init(int w, int h, int flags)
- * \brief initilise tout
+ * \brief iniatilise tout
  * \retval le display
  * 
  */
@@ -120,7 +121,7 @@ int ihm_init(int w, int h, int flags) {
         return (-1);
     }
     
-    /* creer le display */
+    /* cree le display */
     al_set_new_display_flags(flags);
     ihm_context.display = al_create_display(w, h);
     
@@ -143,24 +144,28 @@ int ihm_init(int w, int h, int flags) {
 
 /**
  * \fn void ihm_close()
- * \brief 
+ * \brief ferme tout les addons et libere les files d'events
  * \retval
  * 
  * \attention ne libere pas le lvl_t
  */
 void ihm_close() {
     int i;
-
+    
+    /* Detache les modules de leur file d'event */
     al_unregister_event_source(ihm_context.keyboardQueue, al_get_keyboard_event_source());
     al_unregister_event_source(ihm_context.mouseQueue, al_get_mouse_event_source());
     al_unregister_event_source(ihm_context.displayQueue, al_get_display_event_source(ihm_context.display));
      
+    /* detruit les files */
 	al_destroy_event_queue(ihm_context.keyboardQueue);
 	al_destroy_event_queue(ihm_context.mouseQueue);
 	al_destroy_event_queue(ihm_context.displayQueue);
 
+    /* ferme et libere le display */
     al_destroy_display(ihm_context.display);
     
+    /* libere les bitmaps */
     if ( ihm_context.sprites != NULL ) {
         for (i=0 ; i<NBR_SPRITES ; i++) {
             al_destroy_bitmap( ihm_context.sprites[i] );
@@ -171,10 +176,12 @@ void ihm_close() {
     if ( ihm_context.background != NULL ) 
         al_destroy_bitmap( ihm_context.background );
     
+    
+    /* libere les polices */
     al_destroy_font(ihm_context.fontB);
     al_destroy_font(ihm_context.fontS);
     
-    
+    /* ferme les addon */
     al_shutdown_ttf_addon();
     al_shutdown_font_addon();
     al_shutdown_image_addon();
@@ -191,15 +198,16 @@ void ihm_close() {
 int ihm_loadSpriteSheet(char* path, int dimSprite) {
     int i;
     
-    /* Load and create bitmaps with an alpha channel */
+    /* Charge et cree les bitmap avec un cannal alpha */
     al_set_new_bitmap_format(ALLEGRO_PIXEL_FORMAT_ANY_32_WITH_ALPHA);
     
-    /* Load some bitmap with alpha in it */
+    /* Charge la spritesheet */
     ihm_context.spritesheet = al_load_bitmap(path);
     
     if (ihm_context.spritesheet != NULL ) {
         ihm_context.dimSprite = dimSprite;
         
+        /* Decoupe la spritesheet */
         ihm_context.sprites = (ALLEGRO_BITMAP**) malloc( NBR_SPRITES * sizeof (ALLEGRO_BITMAP*) );
         assert( ihm_context.sprites );
         
@@ -223,7 +231,7 @@ int ihm_loadSpriteSheet(char* path, int dimSprite) {
 
 /**
  * \fn void ihm_loadLab(lvl_t* lvl, int margex, int margey)
- * \brief 
+ * \brief Cree un bitmap contenant le fond du niveau, ce qui ne change pas 
  * \retval
  * 
  */
@@ -244,24 +252,24 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     /* Largeur d'un sprite */
     L = ihm_context.dimSprite;
     
-    /* l'affiche dans le terminal */
+    /* Determine les dimensions du niveau */
     for (l=0; lvl->dat[l] != NULL ; l++ ) {
         for (c=0; lvl->dat[l][c] != lvl_NULL ; c++ ) ;
         ihm_context.wlvl = (c > ihm_context.wlvl) ? c : ihm_context.wlvl;
     }
     ihm_context.hlvl = l;
     
-    /* en nombre de sprite */
+    /* dimension de la fenetre en nombre de sprite */
     w = ihm_context.wlvl + 2*(ihm_context.margex) + ihm_context.dimText;
     h = ihm_context.hlvl + 2*(ihm_context.margey);
     
-    /* window position */
+    /* Place correctement la fenetre */
     al_set_window_position( ihm_context.display, 100, 100);
     
-    /* resize */
+    /* redimensione la fenetre */
     al_resize_display( ihm_context.display, L*w, L*h );
     
-    /* allou ll'image de fond */
+    /* alloue l'image de fond */
     if ( ihm_context.background != NULL )
         al_destroy_bitmap( ihm_context.background );
     
@@ -271,18 +279,18 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
     
     assert( ihm_context.background != NULL );
     
-    /* creer l'image de fond qui ne change pas tout le long du niveau */
+    /* cree l'image de fond qui ne change pas pendant tout le niveau */
     al_set_target_bitmap( ihm_context.background );
     al_clear_to_color( al_map_rgb(0, 0, 0) );
 
-    
+    /* Pour chaque carreau */
     for (l=0; l<h ; l++ ) {
         for (c=0; c<w ; c++ ) {
             /* si on est dans le cadre */
             if ( (c<ihm_context.margex) || (c >= (ihm_context.margex + ihm_context.wlvl)) 
                 || (l<ihm_context.margey) || (l >= (ihm_context.margey + ihm_context.hlvl)) ) {
                 
-                /* draw ground */
+                /* Dessine une terre */
                 al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
             }
             
@@ -290,11 +298,12 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
             else {
                 cell = (ihm_context.lvl->dat[l-ihm_context.margey][c-ihm_context.margex]);
                 
-                /* si on rencontre la senti, on affiche des grounds jusqu'a la marge */
+                /* si on rencontre la sentinelle, on affiche des sols jusqu'a la marge */
                 if ( cell == lvl_NULL ) {
                     meet_sentinel = 1;
                 }
                 
+                /* Sinon on dessine le sprite correspondant a la cellule */
                 if ( meet_sentinel != 0 ) {
                     al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
                 }
@@ -306,7 +315,7 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
                     al_draw_bitmap( ihm_context.sprites[ ihm_TARGET ], c * L, l * L , 0);
                 }
                 else { 
-                    /* draw ground */
+                    /* Dessine un sol */
                     al_draw_bitmap( ihm_context.sprites[ ihm_GROUND ], c * L, l * L , 0);
                 }
             }/* ! else */
@@ -314,7 +323,7 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
         meet_sentinel = 0;
     }/* ! for l */
     
-    /* Change le titre */
+    /* Change le titre de la fenetre en fonction du numero du niveau */
     sprintf(buff, "Sokoban - Niveau %d", lvl->num);
     al_set_window_title(ihm_context.display, buff);
 
@@ -327,7 +336,7 @@ void ihm_loadLab(lvl_t* lvl, int margex, int margey, int dimText) {
 
 /**
  * \fn void ihm_drawBackground();
- * \brief 
+ * \brief afffiche le fond
  * \retval
  * 
  */
@@ -342,11 +351,11 @@ void ihm_drawBackground() {
 
 /**
  * \fn void ihm_drawMovable();
- * \brief dessine les sacs et le player
- * \retval le nombre de sac bien plasse
- * c'est cette fonction qui renvoi le nombre de sac bien place parce que c'est la 
+ * \brief dessine les sacs et le joueur
+ * \retval le nombre de sacs bien plasses
+ * C'est cette fonction qui renvoie le nombre de sacs bien places car c'est la 
  * derniere a parcourir le lvl apres que le coup soit joue.
- * on optimise donc le temps de calcul
+ * on optimise donc un peu le temps de calcul
  * 
  */
 int ihm_drawMovable() {
@@ -381,7 +390,7 @@ int ihm_drawMovable() {
 
 /**
  * \fn void ihm_drawInterface();
- * \brief 
+ * \brief Dessine le texte
  * \retval
  * 
  */
@@ -404,6 +413,12 @@ void ihm_drawInterface(visu_t* vtab, const int n) {
 }
 
 
+
+/**
+ * \fn void ihm_drawIntro();
+ * \brief Affiche une image avec les instruction de jeu 
+ * 
+ */
 void ihm_drawIntro() {
     int W;
     int y = 15;
@@ -412,7 +427,6 @@ void ihm_drawIntro() {
     ALLEGRO_COLOR colorText = al_map_rgb(255, 255, 255);
      
     W = al_get_display_width( ihm_context.display );
-    /*H = al_get_display_height( ihm_context.display ); */
     
     restartTime();
     
@@ -463,11 +477,11 @@ void ihm_drawIntro() {
             
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
-            "T: Recomencer le niveau");
+            "T: Recommencer le niveau");
         
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
-            "C: Montre votre solution a ce niveau");
+            "C: Montre votre solution pour ce niveau");
             
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
@@ -487,11 +501,11 @@ void ihm_drawIntro() {
         
         y += al_get_font_line_height( ihm_context.fontS );
         al_draw_text(ihm_context.fontS, colorText, W/5, y, ALLEGRO_ALIGN_LEFT, 
-            "Echape: Quitter");
+            "Echap: Quitter");
         
         y += al_get_font_line_height( ihm_context.fontS )*1.5;
         al_draw_text(ihm_context.fontS, colorText, W/2, y, ALLEGRO_ALIGN_CENTRE, 
-            "Appuyer sur [Enter] pour commencer");
+            "Appuyez sur [Enter] pour commencer...");
                 
         al_flip_display();
     }
@@ -501,14 +515,17 @@ void ihm_drawIntro() {
 
 
 /* *************************************************** */
-/* ******************* evenements ******************** */ 
+/* ******************* Evenements ******************** */ 
 /* *************************************************** */
 
 
 /**
  * \fn int newkey( KEY_CODE* )
- * \brief 
- * \retval
+ * \brief Les evenements clavier
+ * \param [out] KEY_CODE * 
+ * la touche pressee
+ * \retval int
+ * 1 si une touche a ete pressee, sinon 0
  * 
  */
 int newkey( KEY_CODE* key ) {
@@ -532,8 +549,9 @@ int newkey( KEY_CODE* key ) {
 
 /**
  * \fn int windowClosed()
- * \brief 
- * \retval
+ * \brief Informe si la croix a ete cliquee
+ * \retval int
+ * 1 si la croix a ete cliquee, sinon 0
  * 
  */
 int windowClosed() {
@@ -555,8 +573,11 @@ int windowClosed() {
 
 /**
  * \fn int mouseClicked(ihm_lab* , int*, int*)
- * \brief 
- * \retval
+ * \brief Les evenements souris
+ * \param [out] int * Absisse du clique
+ * \param [out] int * ordonne du clique
+ * \retval int
+ * 1 s'il y a eu un clique, sinon 0
  * 
  */
 int mouseClicked(int* posx, int* posy) {
@@ -580,8 +601,8 @@ int mouseClicked(int* posx, int* posy) {
 
 /**
  * \fn int get_time()
- * \brief toute les seconde
- * \retval
+ * \brief Renvoie le nombre de seconde depuis le dernier restartTime()
+ * \retval int64_t le nombre de seconde depuis le dernier restartTime()
  * 
  */
 int64_t get_time() {
@@ -591,9 +612,7 @@ int64_t get_time() {
 
 /**
  * \fn int restartTime()
- * \brief toute les seconde
- * \retval
- * 
+ * \brief Demarre ou redemarre le timer * 
  */
 void restartTime() {
     al_set_timer_count(ihm_context.timer, 0);
@@ -604,6 +623,11 @@ void restartTime() {
 }
 
 
+/**
+ * \fn int stopTime()
+ * \brief Arrete le timer
+ * 
+ */
 void stopTime() {
     al_stop_timer( ihm_context.timer );
 }

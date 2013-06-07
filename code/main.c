@@ -1,9 +1,3 @@
-/*! \mainpage Mini-projet CS210
- * \section intro_sec Introduction
- * 
- *
- * \subsection step1 Step 1: Opening the box
- */
 /**
  * \file main.c
  * \brief Mini-projet CS210
@@ -14,7 +8,7 @@
  */
 
 
- /* les includes */
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,7 +39,7 @@ typedef enum {
 } Type_game ;
 
 
-/* reset tout les compteur de jeu */
+/* reset tous les compteurs de jeu */
 static void reset_counters(int *checked, int *nbrCanceled, int *nbrPushed, int *nbrPlayed);
 
 /* configure les informations texte */
@@ -67,7 +61,7 @@ static movePlayed_t* getEndElt();
 /**
  * \fn int main()
  * \brief Point d'entree du programme
- * \param [in] int argc : nombre d'argument
+ * \param [in] int argc : nombre d'arguments
  * \param [in] char **argv : arguments
  */
 int main( int argc, char **argv )
@@ -101,10 +95,10 @@ int main( int argc, char **argv )
         return (-1);
     }
     
-    /* affiche quelque ligne d'explication */
+    /* affiche quelques lignes d'explications */
     ihm_drawIntro();
     
-    /* load le lvl 1 */
+    /* charge le niveau 1 */
     if ( load( num, &lvl, &log, FROM_FILE ) != 0 ) {
         printf("erreur to load lvl");
         return (-1);
@@ -117,14 +111,14 @@ int main( int argc, char **argv )
         if ( newkey(&key_k) ) {
         switch ( key_k ) {
 
-            /*On quitte le programme*/  
+            /* Quitter le programme */  
             case ALLEGRO_KEY_ESCAPE :
                 run = 0;
                 break;
             
             /* Jouer un coup */
-            case ALLEGRO_KEY_R: /* redo */
-            case ALLEGRO_KEY_E: /* undo */
+            case ALLEGRO_KEY_R: /* retablir */
+            case ALLEGRO_KEY_E: /* annuler */
             case ALLEGRO_KEY_Z: /* haut */
             case ALLEGRO_KEY_Q: /* gauche */
             case ALLEGRO_KEY_S: /* bas */
@@ -136,23 +130,24 @@ int main( int argc, char **argv )
                     break ;
                 }
                 nbrPlayed += play( key_k, log, lvl, &nbrCanceled, &nbrPushed );
-                
-                /* save log & load next */
-                
+                nbrPlayed = (nbrPlayed < 0) ? 0 : nbrPlayed;
                 break ;
                 
-        /*Recommencer, precedent, suivant niveau */
+        /* Recommencer le niveau, charger le niveau precedent ou suivant */
+            /* Recommencer */
             case ALLEGRO_KEY_T :
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 break;
+            /* charger le niveau precedent */
             case ALLEGRO_KEY_LEFT :
                 num = ( --num < 1 ) ? 1 : num;
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
                     reset_counters(&checked, &nbrCanceled, &nbrPushed, &nbrPlayed);
                 }
                 break;
+            /* charger le niveau suivant */
             case ALLEGRO_KEY_RIGHT :
                 num = ( ++num > getNbrLvl() ) ? getNbrLvl() : num;
                 if ( load( num, &lvl, &log, FROM_FILE ) == 0 ) {
@@ -164,7 +159,7 @@ int main( int argc, char **argv )
                 break;
             /* sauvegarde la partie en cours */
             case ALLEGRO_KEY_W :
-                /* si on a gagne, on interdit le deplacement */
+                /* si on a gagne, on interdit la sauvegarde car elle se fait automatiquement (solution) */
                 if ( checked ) 
                     break;
                 save( lvl, log, SIMPLE );
@@ -195,12 +190,11 @@ int main( int argc, char **argv )
                     }
                 }
                 break ;
+                
             /*Ne rien faire*/
             default : break ;
             
             }/* !switch */
-
-        
         } /* ! if key */
         
         
@@ -224,17 +218,16 @@ int main( int argc, char **argv )
             log_insertAfter( log, getEndElt() );
             log_next( log );
             
-            /* save la solution */
+            /* sauvegarde la solution */
             save( lvl, log, SOLUTION );
             
-            printf("TERMINE\n");
-            
+            printf("Niveau termine\n");
         }
         
         
     } /* ! while */
 
-    
+    /* On ferme tout correctement */
     lvl_closeLevel(lvl);
     lvl_closeFileLvl();
     ihm_close();
@@ -251,8 +244,8 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
     
     switch ( key ) {
 
-    /*annuler/retablir*/
-    /*retablir*/
+/* annuler/retablir */
+    /* retablir */
     case ALLEGRO_KEY_R :
         if ( ( (log->selected) != NULL ) && ( ((log->selected)->next) != NULL ) ) {
             log_next( log );
@@ -266,15 +259,16 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
         }
         break;
 
-    /*annuler*/  
+    /* annuler */  
     case ALLEGRO_KEY_E :
         if ( ( (log->selected) != NULL ) && ( *(movePlayed_t*)((log->selected)->data) != START ) ) {
             
             move = (movePlayed_t*)(log->selected)->data;
             (*nbrPushed) -= ((*move) & PUSHED) ? 1 : 0;
-                 
+            (*nbrPushed) = ((*nbrPushed) < 0) ? 0 : (*nbrPushed);
+            
             revertMove(lvl, move );
-            /* si le premier coup est revert, on se place sur start */
+            /* si le premier coup est annule, on se place sur start */
             log_previous( log );
             printf("Move reverted\n");
             *nbrCanceled = *nbrCanceled +1 ;
@@ -283,8 +277,8 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
         break;
 
     
-    /*Deplacements*/
-    /*on deplace vers le haut*/
+/* Deplacements */
+    /* on deplace vers le haut */
     case ALLEGRO_KEY_Z :
         if ( testMove(lvl, UP) != 0 ) 
         {
@@ -298,7 +292,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
         }
         break ;
         
-    /*on deplace vers le bas*/
+    /* on deplace vers le bas */
     case ALLEGRO_KEY_S :
         if ( testMove(lvl, DOWN) != 0 ) 
         {
@@ -313,7 +307,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
     
         break ;
         
-    /*on deplace vers le gauche*/
+    /* on deplace vers la gauche */
     case ALLEGRO_KEY_Q :
         if ( testMove(lvl, LEFT) != 0 ) 
         {
@@ -328,7 +322,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
     
         break ;
         
-    /*on deplace vers le droite*/
+    /* on deplace vers la droite */
     case ALLEGRO_KEY_D :
         if ( testMove(lvl, RIGHT) != 0 ) 
         {
@@ -343,7 +337,7 @@ int play( KEY_CODE key, log_t* log, lvl_t* lvl, int* nbrCanceled, int* nbrPushed
         
         break;
         
-    /*Ne rien faire*/
+    /* Ne rien faire  */
     default : break ;
     
     }/* !switch */
@@ -387,8 +381,10 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
     if ( (ty == FROM_SAVE) || (ty == FROM_SOLUTION) ) {
         /* une liste existe */
         if ( *plog != NULL ) {
+            /* on la detruit */
             log_destroy( *plog );
         }
+        /* on determine le fichier a charger selon le type de chargement voulu */
         if (ty == FROM_SOLUTION) {
             sprintf(buff, "../save/level%d_(f).sav", num );
         }
@@ -396,6 +392,7 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
             sprintf(buff, "../save/level%d.sav", num );
         }
         
+        /* on charge */
         *plog = log_load( buff, ( sizeof (movePlayed_t) ));
         
         /* echec du chargement de la chaine => on charge le niveau normal */
@@ -410,14 +407,14 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
             for ( sel=(((*plog)->start)->next) ; sel != NULL ; sel = sel->next ) {
                 replayMove(*plvl, (movePlayed_t*)sel->data );
                 
-                /* si on veut la solution, on l'affiche */
+                /* si on veut la solution, on la fait defiler */
                 if (ty == FROM_SOLUTION) {
                     al_rest(0.05);
                     ihm_drawBackground();
                     ihm_drawMovable();
                     al_flip_display();
                     
-                    /* arrete l'affichage de la solution */
+                    /* Si ESC est detecte  arrete l'affichage de la solution */
                     if ( newkey(&key_k) && (key_k == ALLEGRO_KEY_ESCAPE) ) {
                         ty = FROM_SAVE;
                     }
@@ -428,6 +425,7 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
         }
     }
     
+    /* sinon, on charge depuis le fichier de niveau */
     if ( ty == FROM_FILE ) {
         /* la liste n'est pas instanciee */
         if ( *plog == NULL ) {
@@ -455,10 +453,9 @@ int load(int num, lvl_t** plvl, log_t** plog, Type_load ty ) {
 
 void save( lvl_t* lvl, log_t* log, Type_game type ) {
 
-
     char buff[32] = {0};
     
-    /* si il y a que le maillon start */
+    /* s'il n'y a que le maillon start */
     if ( (*(Move*)((log->start)->data)) == (*(Move*)((log->end)->data)) ) {
         return ;
     }
@@ -477,6 +474,7 @@ void save( lvl_t* lvl, log_t* log, Type_game type ) {
 
 
 void setVisu(visu_t* visu, int num, int cancel, int play, int push, int64_t t, int bagStocked, int nbrTarget) {
+    /* en static car l'IHM a besoin de ces chaine */
     static char t_num   [32];
     static char t_cancel[32];
     static char t_play  [32];
@@ -485,6 +483,7 @@ void setVisu(visu_t* visu, int num, int cancel, int play, int push, int64_t t, i
     static char t_bagStocked [32];
     static char t_vict[] = "VICTOIRE";
 
+    /* definie la couleur, la taille et le texte pour chaque visu */
     visu[0].color = al_map_rgb(0, 0, 0);
     visu[1].color = al_map_rgb(0, 0, 255);
     visu[2].color = al_map_rgb(0, 0, 255);

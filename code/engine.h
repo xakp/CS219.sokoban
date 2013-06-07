@@ -13,11 +13,19 @@
 #define ENGINE_H
 
 
-#include "level.h"
 #include <stdint.h>
+#include "level.h"
 
 
-/* les differentes directions */
+
+/**
+ * \def PUSHED
+ * \brief C'est le bit qui indique si un sac a ete pousse dans les movePlayed_t
+ */
+#define PUSHED 0x80
+
+
+/* les differentes directions et les balises de fin et de debut de chaine */
 typedef enum {
     LEFT = 1,
     DOWN = 2,
@@ -28,14 +36,13 @@ typedef enum {
 } Move;
 
 
-#define PUSHED 0x80
 
 typedef unsigned int movePlayed_t;
 
 /* test la validite du mouvement */
 int testMove( lvl_t*, Move );
 
-/* joue le mouvement et renvoi la donnee a sauvegarder */
+/* joue le mouvement et renvoie la donnee a sauvegarder */
 movePlayed_t* playMove( lvl_t* , Move );
 
 /* annule le coup passe en parametre */

@@ -30,9 +30,9 @@ static void _log_freeEltsForward(log_actions_t* );
  */
 log_t* log_create(size_t s) 
 {
-    /*on alloue de la memoire de la taille d'un log_t*/
+    /* on alloue de la memoire */
     log_t* logCreated = (log_t*)malloc( sizeof (log_t) ); 
-    /*On verifie si l'allocation a bien ete faite, on arrete le programme sinon*/
+    /* On verifie si l'allocation a bien ete faite, on arrete le programme sinon */
     assert(logCreated != NULL);
     
     logCreated->start = NULL;
@@ -59,12 +59,12 @@ void log_destroy( log_t* log )
 {
     assert(log != NULL);
     
-    /*Si le premier element de la chaine n'est pas nul, on supprime les maillons*/
+    /* Si le premier element de la chaine n'est pas nul, on supprime les maillons */
     if (log->start != NULL) {
-        /*Appel de la fonction supprimant les maillons*/
+        /* Appel de la fonction supprimant les maillons */
         _log_freeEltsForward(log->start); 
     }
-    /*Liberation de la liste*/
+    /* Liberation de la liste */
     free (log); 
 }
 
@@ -76,32 +76,32 @@ void log_destroy( log_t* log )
  * \ingroup log
  * \fn log_t*  log_save( log_t*, char* )
  * \brief Sauvegarde la liste
- * \param La liste a sauver et le nom
+ * \param La liste a sauvegarder et le nom
  * \retval Code d'erreur
  * \attention Ecrase la sauvegarde precedente si le fichier existe deja
  * 
  */
 void log_save( log_t* logToSave, char* logName )
 {
-    /*On cree un pointeur sur fichier*/
+    /* On cree un pointeur sur fichier */
     FILE* fd = NULL; 
-    /*on cree un pointeur sur maillon*/
+    /* on cree un pointeur sur maillon */
     log_actions_t* p; 
     
     assert(logToSave != NULL);
     
-    /*On fait pointer sur le fichier ouvert*/
+    /* On fait pointer sur le fichier ouvert */
     fd = fopen(logName, "wb+"); 
-    /*On verifie le pointeur ouvert*/
+    /* On verifie le pointeur ouvert */
     assert(fd != NULL); 
     
-    /*On parcours la liste chainee de start a end(next est alors egal a 0)*/
-    for ( p = (logToSave->start); p != NULL; p = p->next ) {
-        /*Ecrit les data des maillons dans le fichier*/
+    /*  On parcourt la liste chainee de start a end (next est alors egal a 0) */
+    for ( p = (logToSave->start) ; p != NULL ; p = p->next ) {
+        /* Ecrit les data des maillons dans le fichier */
         fwrite(( p->data), logToSave->size, 1, fd); 
     }
-    /*Referme le fichier*/
-    fclose (fd); 
+    /* Referme le fichier  */
+    fclose(fd); 
 
 
 }
@@ -110,7 +110,7 @@ void log_save( log_t* logToSave, char* logName )
  * \fn log_t* log_load( char, size_t )
  * \brief Charger la liste
  * \param La liste a charger et la taille de la donnee a lire
- * place le curseur a la fin
+ * Place le curseur a la fin
  * 
  */
 log_t* log_load( char* logName, size_t s )
@@ -121,7 +121,7 @@ log_t* log_load( char* logName, size_t s )
     log_t* logLoaded = log_create(s);
     assert( logLoaded != NULL);
     
-    
+    /* Ouvre le fichier */
     fd = fopen(logName, "rb");
     if (fd == NULL)
     {
@@ -134,22 +134,22 @@ log_t* log_load( char* logName, size_t s )
         tmp = malloc( s );
         assert(tmp != NULL);
         
-        /*Si lecture reussie*/
+        /* Si lecture est reussie */
         if ( fread( tmp, s, 1, fd) != 0 ) 
         {
-            /*Insere un maillon avec la donne lue*/
+            /* Insere un maillon avec la donnee lue */
             log_insertAfter( logLoaded, tmp );
-            /*On deplace le curseur pour se trouver sur le dernier elt insere*/
+            /* On deplace le curseur pour se trouver sur le dernier elt insere  */
             log_next( logLoaded ); 
 
         }
         
-        /*Si la lecture est finie ou que le fichier est vide*/
+        /* Si la lecture est finie ou que le fichier est vide */
         else
         {
-            /*On libere le tmp*/
+            /* On libere le tmp */
             free(tmp);
-            /*tmp = NULL; On place le tmp a null pour la condition de sortie*/
+            /* tmp = NULL; On place le tmp a null pour la condition de sortie */
             run=0;
         }
     } while (run);
@@ -178,9 +178,9 @@ void log_next( log_t* log )
 {
     assert(log != NULL);
 
-    /*Si l'elt selectionne n'est pas le dernier de la liste chainee*/
+    /* Si l'elt selectionne n'est pas le dernier de la liste chainee */
     if ( (log->selected)->next != NULL) {
-        /*On decale le curseur sur l'elt suivant*/
+        /* On decale le curseur sur l'elt suivant */
         log->selected=(log->selected)->next; 
     }
 }
@@ -200,9 +200,9 @@ void log_previous( log_t* log )
 {
     assert(log != NULL);
 
-    /*Si l'elt selectionne n'est pas le premier de la liste chainee*/
+    /* Si l'elt selectionne n'est pas le premier de la liste chainee */
     if ( (log->selected)->previous != NULL)  {
-        /*On decale le curseur sur l'elt suivant*/
+        /* On decale le curseur sur l'elt suivant */
         log->selected=(log->selected)->previous; 
     } 
 }
@@ -222,9 +222,9 @@ void log_start( log_t* log )
 { 
     assert(log != NULL);
 
-    /*S'il existe un premier elt*/
-    if (log->start !=NULL) {
-        /*On déplace le curseur sur le premier elt*/
+    /* S'il existe un premier elt */
+    if (log->start != NULL) {
+        /* On deplace le curseur sur le premier elt */
         log->selected = log->start; 
     }
 }
@@ -243,9 +243,9 @@ void log_end( log_t* log )
 {
     assert(log != NULL);
 
-    /*S'il existe un dernier elt*/
+    /* S'il existe un dernier elt */
     if (log->end !=NULL)  {
-        /*On déplace le curseur sur le dernier elt*/
+        /* On deplace le curseur sur le dernier elt */
         log->selected = log->end; 
     }
 }
@@ -276,7 +276,7 @@ void log_insertAfter( log_t* log, void* dataInsert )
     eltInsert->data = dataInsert;
 
 
-    /*Si la chaine est vide*/
+    /* Si la chaine est vide */
     if (log->start == NULL) 
     {
        eltInsert->next = NULL;
@@ -287,7 +287,7 @@ void log_insertAfter( log_t* log, void* dataInsert )
        return ;
     }
     
-    /* dans tout les autres cas */
+    /* Dans tout les autres cas */
     eltInsert->next = (log->selected)->next;
     eltInsert->previous = log->selected;
     
@@ -295,7 +295,7 @@ void log_insertAfter( log_t* log, void* dataInsert )
         ((log->selected)->next)->previous = eltInsert;
     }
     else {
-        /*Maintenant, l'elt insere est le dernier, il faut donc le preciser !*/
+        /* Maintenant, l'elt insere est le dernier, il faut donc le preciser ! */
         log->end = eltInsert; 
     }
     (log->selected)->next = eltInsert;
@@ -306,7 +306,7 @@ void log_insertAfter( log_t* log, void* dataInsert )
 /**
  * \ingroup log
  * \fn int log_insertBefore( log_t* log, void* data )
- * \brief Ajout la donnee avant l'element selecionnee
+ * \brief Ajoute la donnee avant l'element selecionnee
  * \param La liste
  * \param La donnee
  * \retval Code d'erreur
@@ -318,22 +318,23 @@ void log_insertBefore( log_t* log, void* dataInsert )
 {
     log_actions_t *eltInsert = NULL;
     
-    /*Si la chaine passee en paramètre est vide, on retourne une erreur*/
+    /* Si la chaine passee en paramètre est vide, on retourne une erreur */
     assert(log != NULL);
 
-    /* on allou le nouveau maillon */
+    /* On alloue le nouveau maillon */
     eltInsert = malloc( sizeof (log_actions_t) );
     assert( eltInsert != NULL );
-    /*On insere la donnee*/
+    
+    /* On insere la donnee */
     eltInsert->data = dataInsert; 
     
-    /*Si la chaine est vide*/
+    /* Si la chaine est vide */
     if (log->start == NULL)
     {
        eltInsert->next = NULL;
        eltInsert->previous = NULL;
-       log->start = eltInsert ;
-       log->selected = eltInsert ;
+       log->start = eltInsert;
+       log->selected = eltInsert;
        log->end =  eltInsert;
        return ;
     }
@@ -345,7 +346,7 @@ void log_insertBefore( log_t* log, void* dataInsert )
         ((log->selected)->previous)->next = eltInsert;
     }
     else {
-        /*Maintenant, l'elt insere est le dernier, il faut donc le preciser !*/
+        /* Maintenant, l'elt insere est le dernier, il faut donc le preciser ! */
         log->start = eltInsert; 
     }
     (log->selected)->previous = eltInsert;
@@ -369,12 +370,13 @@ static void _log_freeEltsForward(log_actions_t* logDelete)
 {
     if (logDelete->next != NULL)
     {
-        /*Recusrivite : on l'appelle a chaque fois pour l'elt suivant, jusqu'a ce qu'on se situe au dernier elt de la chaine*/
+        /* Recusrivite : on l'appelle a chaque fois pour l'elt suivant, 
+            jusqu'a ce qu'on se situe au dernier elt de la chaine*/
         _log_freeEltsForward(logDelete->next); 
     }
-    /*On libere la donnee de chaque maillon*/
+    /*  On libere la donnee de chaque maillon*/
     free(logDelete->data); 
-    /*On libere chaque maillon*/
+    /* On libere chaque maillon */
     free(logDelete); 
 }
 
@@ -382,7 +384,8 @@ static void _log_freeEltsForward(log_actions_t* logDelete)
  * \fn static void _log_freeEltsBackward(log_actions_t* logDelete)
  * \brief Supprime le maillon precedent
  * \param Maillon a supprimer
- * Cette fonction est statique car elle ne doit pas etre utilisee ailleurs. L'utilisateur doit passer seulement par les fonctions proposees.
+ * Cette fonction est statique car elle ne doit pas etre utilisee ailleurs. 
+ * L'utilisateur doit passer seulement par les fonctions proposees.
  *
  */
  
@@ -390,12 +393,13 @@ static void _log_freeEltsBackward(log_actions_t* logDelete)
 {
     if (logDelete->previous != NULL)
     {
-        /*Recusrivite : on l'appelle a chaque fois pour l'elt suivant, jusqu'a ce qu'on se situe au dernier elt de la chaine*/
+        /* Recusrivite : on l'appelle a chaque fois pour l'elt suivant, 
+            jusqu'a ce qu'on se situe au dernier elt de la chaine */
         _log_freeEltsBackward(logDelete->previous); 
     }
-    /*On libere la donnee de chaque maillon*/
+    /* On libere la donnee de chaque maillon  */
     free(logDelete->data); 
-    /*On libere chaque maillon*/
+    /* On libere chaque maillon */
     free(logDelete); 
 }
 
@@ -420,20 +424,20 @@ void log_freeSelected( log_t* log )
     
     /* si la chaine est vide */
     if ( log-> selected == NULL) {
-        return;
+        return ;
     }    
     
-    /*On memorise l'elt selectionne*/
+    /* On memorise l'elt selectionne */
     sel = log->selected;
     
-    /*Si l'elt selectionne est seul*/
+    /* Si l'elt selectionne est seul */
     if ( (sel->next == NULL) && (sel->previous == NULL) ) {
         log->selected = NULL;
         log->start = NULL;
         log->end = NULL;
     }
     
-    /*Sinon si c'est le dernier*/
+    /* Sinon si c'est le dernier */
     else if (sel->next == NULL) {
         /* on est sur qu'il y en a un avant */
         (sel->previous)->next = NULL;
@@ -441,7 +445,7 @@ void log_freeSelected( log_t* log )
         log->selected = sel->previous;
     }
     
-    /*Sinon si c'est le premier*/
+    /* Sinon si c'est le premier */
     else if (sel->previous == NULL) {
         /* on est sur qu'il y en a un avant */
         (sel->next)->previous = NULL;
@@ -480,10 +484,11 @@ void log_freeForward( log_t* log )
     
     if ( (log->selected) != NULL ) {
         if ( (log->selected)->next != NULL) {
-            /*On appelle la fonction qui supprime les maillons suivants l'elt selectionne car on passe next en parametre*/
+            /* On appelle la fonction qui supprime les maillons suivants l'elt selectionne 
+                car on passe next en parametre */
             _log_freeEltsForward((log->selected)->next);
             
-            /*L'elt selectionne devient le dernier, son pointeur sur l'elt suivant est donc nul*/
+            /* L'elt selectionne devient le dernier, son pointeur sur l'elt suivant est donc nul */
             (log->selected)->next = NULL; 
             log->end = log->selected;
         }
@@ -507,12 +512,12 @@ void log_freeBackward( log_t* log )
 {
     assert(log != NULL);
     
-    /*On appelle la fonction qui supprime les maillons precedant l'elt selectionne car on passe previous en parametre*/
+    /* On appelle la fonction qui supprime les maillons precedant l'elt selectionne car on passe previous en parametre */
     if ( (log->selected) != NULL ) {
         if ((log->selected)->previous != NULL) {
             _log_freeEltsBackward((log->selected)->previous); 
             
-            /*L'elt selectionne devient le premier, son pointeur sur l'elt precedant est donc nul*/
+            /* L'elt selectionne devient le premier, son pointeur sur l'elt precedant est donc nul */
             (log->selected)->previous = NULL;
             log->start = log->selected;
         }
@@ -536,7 +541,8 @@ void log_freeAll( log_t* log )
     assert(log != NULL);
 
     if (log->start != NULL ) {
-        _log_freeEltsForward(log->start); /*On supprime tout a partir du maillon start et lui meme*/
+        /* On supprime tout a partir du maillon start et lui meme */
+        _log_freeEltsForward(log->start); 
         log->start = NULL;
         log->end = NULL;
         log->selected = NULL;

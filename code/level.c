@@ -17,17 +17,17 @@
 
 
 /**
- * \struct static struct datafile_t
- * \brief Contient l'instance du fichier level.lvl ainsi que le nombre de niveau 
+ * \var datafile
+ * \brief Contient l'instance du fichier level.lvl ainsi que le nombre de niveaux
  * Cette variable est globale parce que toutes les fonctions de ce fichier ont besoin de ces informations.
  * Cette variable est static pour la proteger car elle est globale.
  *
  */
 static struct datafile_t {
-    char *name;         /*!< Nom du fichier. */
+    char name[32];         /*!< Nom du fichier. */
     uint32_t nbrLvl;    /*!< Contient le nombre de niveaux. */
     FILE *fd;           /*!< Pointeur sur l'instance du fichier */
-} datafile = {NULL, 0, NULL};
+} datafile = {{0}, 0, NULL};
 
 
 
@@ -54,9 +54,9 @@ int8_t lvl_openFileLvl( char *fileName )
     if (datafile.fd == NULL) {
         fprintf(stderr, "error: openFileLvl(): nom du fichier non renseigne.\n");
     }
-    datafile.name = fileName;
+    strcpy(datafile.name, fileName);
     
-    /* cherche le nombre de niveau */
+    /* cherche le nombre de niveaux */
     while ( fgets(buff, BUFFER_SIZE, datafile.fd) != NULL ) {
     
         /* on cherche l'occurence de ";MAXLEVEL" */
@@ -83,16 +83,17 @@ lvl_t* lvl_readLevel( int16_t num )
     char buff[BUFFER_SIZE];
     /* contiendra le motif a rechercher */
     char motif[16];
-    /* positrion du debut du niveau */
+    /* position du debut du niveau */
     fpos_t pos;
     uint16_t nbL = 0;
     uint16_t l;
+    int playerFound = 0;
     uint16_t len;
     int i;
     lvl_t* lvl = NULL;
     assert( lvl = malloc( sizeof (lvl_t) ) );
     
-    /* creer le motif pour rechercher le niveau */
+    /* cree le motif pour rechercher le niveau */
     sprintf(motif, ";LEVEL %d\n", num);
     
     /* Se place au debut des niveaux */
@@ -100,7 +101,7 @@ lvl_t* lvl_readLevel( int16_t num )
     
     /* cherche le numero du niveau */
     while ( fgets(buff, BUFFER_SIZE, datafile.fd) != NULL ) {
-        /* on cherche l'occurence de ";LEVEL XX" */
+        /* on cherche l'occurence de ";LEVEL #" */
         if ( strstr(buff, motif) != NULL ) {
             break;
         }
@@ -110,7 +111,7 @@ lvl_t* lvl_readLevel( int16_t num )
         return NULL;
     }
     
-    /* passe les commentaire du niveau (auteur...) */
+    /* passe les commentaires du niveau (auteur...) */
     do {
         /* curseur au debut de la ligne */
         fgetpos(datafile.fd, &pos);
@@ -123,10 +124,10 @@ lvl_t* lvl_readLevel( int16_t num )
         /* c'est un commentaire : ca commence par un ';' */
     } while ( buff[0] == ';' );
 
-    /* si on est la c'est qu'on a trouver une ligne valide */
+    /* si on est la c'est qu'on a trouve une ligne valide */
     nbL++;
 
-    /* compt le nombre de ligne dans le niveau */
+    /* compte le nombre de ligne dans le niveau */
     while ( fgets(buff, BUFFER_SIZE, datafile.fd) != NULL ) {
         if ( buff[0] == ';' )
             break;
@@ -144,15 +145,16 @@ lvl_t* lvl_readLevel( int16_t num )
     
     /* charge le niveau ligne par ligne */
     for (l=0 ; l<nbL ; l++) {
-        /* on sait que la lecture est possible car on la deja fait */
+        /* on sait que la lecture est possible car on l'a deja faite */
         assert( fgets(buff, BUFFER_SIZE, datafile.fd) );
         
         len = strlen(buff);
-        /* on allou et verivie l'allocation de la ligne */
+        /* on alloue et verifie l'allocation de la ligne */
         assert( lvl->dat[l] = malloc( (len) * sizeof (lvl_cell) ) );
 
-        /* on remplie la ligne */
+        /* on rempli la ligne */
         for (i=0 ; i<len ; i++) {
+            lvl->dat[l][i] = lvl_NULL;
             switch ( buff[i] ) {
                 case ENCODE_WALL:
                     lvl->dat[l][i] = lvl_WALL;
@@ -166,6 +168,7 @@ lvl_t* lvl_readLevel( int16_t num )
                     break;
                 case ENCODE_PLAYER:
                     lvl->dat[l][i] = lvl_PLAYER | lvl_GROUND;
+                    playerFound = 1;
                     break;
                 case ENCODE_BAG_TARGETED:
                     lvl->dat[l][i] = lvl_TARGET | lvl_BAG;
@@ -186,15 +189,20 @@ lvl_t* lvl_readLevel( int16_t num )
     lvl->dat[nbL] = NULL;
     lvl->num = num;
     
+    if (playerFound == 0) {
+        lvl_closeLevel( lvl );
+        return (0);
+    }
+    
     return (lvl);
 }
 
 
 /**
  * \fn int getNbrLvl()
- * \brief Renvoi le nombre de niveau dans le fichier
+ * \brief Renvoie le nombre de niveaux dans le fichier
  * \retval int
- * Le nombre de niveau dans le fichier
+ * Le nombre de niveaux dans le fichier
  */
 int getNbrLvl() {
     return (datafile.nbrLvl);
@@ -204,7 +212,7 @@ int getNbrLvl() {
 
 /**
  * \fn void lvl_closeFileLvl();
- * \brief Ferme le fichier de levels
+ * \brief Ferme le fichier de niveaux
  * 
  */
 void lvl_closeFileLvl() {
@@ -232,10 +240,10 @@ void lvl_closeLevel(lvl_t* lvl) {
     /* libere les lignes */
     while (*l) free( *(l++) );
     
-    /* libere le tableau de pointeur de lignes */
+    /* libere le tableau de pointeurs de lignes */
     free(lvl->dat);
     
-    /* libere le lvl */
+    /* libere le lvl_t */
     free(lvl);
 }
 

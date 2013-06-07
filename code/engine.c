@@ -27,8 +27,8 @@ static struct {
 
 /**
  * \fn static void convertMove(Move , int *, int *)
- * \brief donne par parametre le mouvement relatif au player
- * \param mouvement
+ * \brief Donne par parametre le mouvement relatif au player
+ * \param Mouvement
  * \param x relatif
  * \param y relatif
  * 
@@ -52,11 +52,11 @@ static void foundPlayer(lvl_t* lvl);
  * \brief test la validite du coup
  * \param le niveau concerne
  * \param la direction
- * \retval 0 : coup illegal, !0 sinon
+ * \retval 0 : coup illegal, sinon different de 0
  * 
  */
 int testMove( lvl_t* lvl, Move mo ) {
-    /* la case problematique relative au joueur */
+    /* la case destination relative au joueur */
     int ox, oy;
     
 
@@ -88,11 +88,11 @@ int testMove( lvl_t* lvl, Move mo ) {
  * \brief joue le coup et renvoi la donnee a allouee
  * \param le niveau concerne
  * \param la direction
- * \retval le movement a logge (NULL => coup illegal)
+ * \retval le mouvement a chainer (NULL => coup illegal)
  * 
  */
 movePlayed_t* playMove( lvl_t* lvl , Move mo )  {
-    /* la case problematique relative au joueur */
+    /* la case destination relative au joueur */
     int ox, oy;
     movePlayed_t* move = NULL;
     
@@ -117,13 +117,13 @@ movePlayed_t* playMove( lvl_t* lvl , Move mo )  {
     lvl(px, py) &= ~lvl_PLAYER;
     
     
-    /* configure le move */
+    /* configure le mouvement */
     *move = mo;
     
     /* un sac doit bouger */
     if ( ( lvl(px+ox, py+oy) & lvl_BAG ) && ((lvl(px+ox*2, py+oy*2) & lvl_access ) == 0 ) )
     {
-        /* leve le bit de poid fort */
+        /* leve le bit de poid fort qui represente "pousse d'un sac" */
         *move |= PUSHED; /*0b10000000*/
         
         /* move bag by player */
@@ -181,7 +181,7 @@ void revertMove( lvl_t* lvl, movePlayed_t* mp) {
 
 /**
  * \fn void replayMove( lvl_t*, movePlayed_t*  );
- * \brief retablie le coup passe en param
+ * \brief retabli le coup passe en param
  * \param le niveau concerne
  * \param le coup
  * 
@@ -252,7 +252,7 @@ static void convertMove(Move mo, int *ox, int *oy) {
 static void foundPlayer(lvl_t* lvl) {
     int i, j;
     
-    /* l'affiche dans le terminal */
+    /* Parcourt chaque case pour y trouver le joueur */
     for (i=0; lvl->dat[i] != NULL ; i++ ) {
         for (j=0; lvl->dat[i][j] != lvl_NULL ; j++ ) {
             if ( lvl->dat[i][j] & lvl_PLAYER) {

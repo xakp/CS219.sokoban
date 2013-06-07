@@ -30,23 +30,23 @@ typedef int KEY_CODE;
 
 /**
  * \enum Sprites
- * \brief les differents sprites a afficher
+ * \brief Les differents sprites a afficher
  * 
  */
 typedef enum {  
-    ihm_PLAYER_RIGHT = 0,       /*!<  */
-    ihm_PLAYER_LEFT = 1,        /*!<  */
-    ihm_PLAYER_UP = 2,          /*!<  */
-    ihm_PLAYER_DOWN = 3,        /*!<  */
-    ihm_PLAYER_RIGHT_PUSH = 4,  /*!<  */
-    ihm_PLAYER_LEFT_PUSH = 5,   /*!<  */
-    ihm_PLAYER_UP_PUSH = 6,     /*!<  */
-    ihm_PLAYER_DOWN_PUSH = 7,   /*!<  */
-    ihm_BAG = 8,                /*!<  */
-    ihm_TARGET = 9,             /*!<  */
-    ihm_WALL = 10,              /*!<  */
-    ihm_GROUND = 11,            /*!<  */
-    ihm_BAG_OK = 12             /*!<  */
+    ihm_PLAYER_RIGHT = 0,     
+    ihm_PLAYER_LEFT = 1,      
+    ihm_PLAYER_UP = 2,        
+    ihm_PLAYER_DOWN = 3,      
+    ihm_PLAYER_RIGHT_PUSH = 4,
+    ihm_PLAYER_LEFT_PUSH = 5, 
+    ihm_PLAYER_UP_PUSH = 6,   
+    ihm_PLAYER_DOWN_PUSH = 7, 
+    ihm_BAG = 8,              
+    ihm_TARGET = 9,           
+    ihm_WALL = 10,            
+    ihm_GROUND = 11,          
+    ihm_BAG_OK = 12           
 } Sprites;
 #define NBR_SPRITES 13
 
@@ -58,17 +58,17 @@ typedef enum {
 
 /**
  * \struct visu_t
- * \brief la visu a afficher
+ * \brief Decrit un element texte a afficher
  * 
  */
 typedef struct {
-    ALLEGRO_COLOR color;
-    ihm_size size;
-    char* txt;
+    ALLEGRO_COLOR color; /*!< La couleur */
+    ihm_size size;       /*!< Le choix entre 2 tailles */
+    char* txt;           /*!< Un pointeur vers la chaine a afficher */
 } visu_t;
 
 
-/* initialise allegro ET le module clavier d'allegro, cree une file en globale static ET les files d'events de display... */
+/* initialise allegro ET les modules clavier, souris, texte graphique d'allegro, cree les files en globale static */
 int     ihm_init(int w, int h, int flags);
 void    ihm_close();
 

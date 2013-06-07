@@ -29,10 +29,10 @@
 
 struct log_actions_t {
     /* donnees */
-    void* data;             /*!< donne definissant un coup, a definir avec gab*/
+    void* data;             /*!< Pointeur vers la donnee*/
     /* double chainage */
-    struct log_actions_t* next;   /*!< Le coup suivant*/
-    struct log_actions_t* previous; /*!< Le coup precedent*/
+    struct log_actions_t* next;   /*!< L'action suivante */
+    struct log_actions_t* previous; /*!< L'action precedente */
 };
 
 typedef struct log_actions_t log_actions_t;
@@ -41,7 +41,7 @@ typedef struct log_actions_t log_actions_t;
 /**
  * \ingroup log
  * \struct log_t
- * \brief Chaine, definie par le premier et le dernier maillon, ainsi que d'un maillon selectionne
+ * \brief Chaine, definie par le premier et le dernier maillon, ainsi que par un maillon selectionne
  */
 typedef struct {
     size_t size;
@@ -51,13 +51,13 @@ typedef struct {
 } log_t;
 
 
-/* <instanciation */ 
-log_t*  log_create(size_t); /*Cree une instance de liste chainee*/
-void    log_destroy( log_t* ); /*Libere toute la liste chainee et l'instance de la liste*/
+/* instanciation */ 
+log_t*  log_create(size_t); /* Cree une instance de liste chainee */
+void    log_destroy( log_t* ); /* Libere toute la liste chainee et l'instance de la liste */
 
-/*Enregistrement et chargement de la chaine*/
-void    log_save( log_t*, char* ); /*Permet de sauvegarder la partie souhaitee*/
-log_t*  log_load( char*, size_t ); /*Permet de charger la partie souhaitee*/
+/* Enregistrement et chargement de la chaine */
+void    log_save( log_t*, char* ); /* Permet de sauvegarder la partie souhaitee */
+log_t*  log_load( char*, size_t ); /* Permet de charger la partie souhaitee */
 
 /* Deplacement du  curseur de selection */
 void    log_next( log_t* );
@@ -67,12 +67,12 @@ void    log_end( log_t* );
 
 /* Insertion de coups, maillons */
 void    log_insertAfter( log_t* , void* );
-void    log_insertBefore( log_t* , void* ); /*pas utile maintenant*/
+void    log_insertBefore( log_t* , void* );
 
 /* Suppression : libere les datas, des maillons */
-void    log_freeSelected( log_t* ); /*Pas utile maintenant*/
+void    log_freeSelected( log_t* );
 void    log_freeForward( log_t* );
-void    log_freeBackward( log_t* ); /*Not now*/
+void    log_freeBackward( log_t* );
 void    log_freeAll( log_t* );
  
 
